@@ -65,16 +65,16 @@ const Adjustments = () => {
     <div className="space-y-6">
 
       {/* Header */}
-      <div className="bg-white rounded-2xl p-5 sm:p-6 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="bg-gray-800 rounded-2xl p-5 sm:p-6 shadow-md shadow-black/20 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-800">Adjustments</h1>
+          <h1 className="text-2xl font-bold text-white">Adjustments</h1>
           <p className="text-sm text-gray-400 mt-1">
             Manage stock additions and subtractions
           </p>
         </div>
         <button
           onClick={() => { setShowModal(true); setError(""); }}
-          className="w-full sm:w-auto bg-gray-800 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl font-semibold text-sm transition"
+          className="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-2.5 rounded-xl font-semibold text-sm transition shadow-md shadow-indigo-500/20"
         >
           + New Adjustment
         </button>
@@ -82,19 +82,19 @@ const Adjustments = () => {
 
       {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
-        <div className="bg-blue-300 rounded-2xl p-4 shadow-sm text-center">
-          <p className="text-xs text-black mb-1">Total</p>
-          <p className="text-2xl font-bold text-black">{adjustments.length}</p>
+        <div className="bg-blue-500/20 border border-blue-500/30 rounded-2xl p-4 shadow-md shadow-black/20 text-center">
+          <p className="text-xs text-gray-300 mb-1">Total</p>
+          <p className="text-2xl font-bold text-white">{adjustments.length}</p>
         </div>
-        <div className="bg-yellow-200 rounded-2xl p-4 shadow-sm text-center">
-          <p className="text-xs text-black mb-1">Additions</p>
-          <p className="text-2xl font-bold text-black">
+        <div className="bg-yellow-500/20 border border-yellow-500/30 rounded-2xl p-4 shadow-md shadow-black/20 text-center">
+          <p className="text-xs text-gray-300 mb-1">Additions</p>
+          <p className="text-2xl font-bold text-white">
             {adjustments.filter((a) => a.type === "addition").length}
           </p>
         </div>
-        <div className="bg-red-200 rounded-2xl p-4 shadow-sm text-center col-span-2 sm:col-span-1">
-          <p className="text-xs text-black mb-1">Subtractions</p>
-          <p className="text-2xl font-bold text-black">
+        <div className="bg-red-500/20 border border-red-500/30 rounded-2xl p-4 shadow-md shadow-black/20 text-center col-span-2 sm:col-span-1">
+          <p className="text-xs text-gray-300 mb-1">Subtractions</p>
+          <p className="text-2xl font-bold text-white">
             {adjustments.filter((a) => a.type === "subtraction").length}
           </p>
         </div>
@@ -111,7 +111,7 @@ const Adjustments = () => {
           placeholder="Search products..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full border border-gray-200 rounded-xl pl-10 pr-3 py-2 text-sm 
+          className="w-full border border-gray-700 rounded-xl pl-10 pr-3 py-2 text-sm 
                      focus:outline-none focus:ring-2 focus:ring-gray-800"
         />
       </div>
@@ -122,12 +122,12 @@ const Adjustments = () => {
           <div className="text-center py-10 text-gray-400">Loading...</div>
         ) : filtered.length > 0 ? (
           filtered.map((adj) => (
-            <div key={adj._id} className="bg-white rounded-2xl shadow-sm p-5 space-y-3">
+            <div key={adj._id} className="bg-gray-800 rounded-2xl shadow-md shadow-black/20 p-5 space-y-3">
               <div className="flex items-center justify-between">
-                <p className="font-bold text-gray-800">{adj.product?.name}</p>
+                <p className="font-bold text-white">{adj.product?.name}</p>
                 <span className={`px-3 py-1 rounded-full text-xs font-bold ${adj.type === "addition"
-                  ? "bg-emerald-100 text-emerald-700"
-                  : "bg-red-100 text-red-700"
+                  ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
+                  : "bg-red-500/20 text-red-300 border border-red-500/30"
                   }`}>
                   {adj.type === "addition" ? "+" : "-"}{adj.quantity}
                 </span>
@@ -151,11 +151,11 @@ const Adjustments = () => {
       </div>
 
       {/* Desktop Table */}
-      <div className="hidden lg:block bg-white rounded-2xl shadow-sm overflow-hidden">
+      <div className="hidden lg:block bg-gray-800 rounded-2xl shadow-md shadow-black/20 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="bg-gray-50 text-gray-500 text-xs uppercase tracking-wider text-left">
+              <tr className="bg-gray-900 text-gray-500 text-xs uppercase tracking-wider text-left">
                 <th className="px-6 py-4">Product</th>
                 <th className="px-6 py-4">SKU</th>
                 <th className="px-6 py-4">Type</th>
@@ -166,18 +166,18 @@ const Adjustments = () => {
                 <th className="px-6 py-4">Date</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-50">
+            <tbody className="divide-y divide-gray-700">
               {loading ? (
                 <div className="flex items-center justify-center h-64">
                   <div className=" flex justify-center items-center flex-col text-center py-16 text-gray-400">
-                    <FiLoader className="text-4xl mb-2 mx-auto animate-spin text-gray-500" />
+                    <FiLoader className="text-4xl mb-2 mx-auto animate-spin text-gray-400" />
                     Loading...
                   </div>
                 </div>
               ) : filtered.length > 0 ? (
                 filtered.map((adj) => (
-                  <tr key={adj._id} className="hover:bg-gray-50 transition">
-                    <td className="px-6 py-4 font-semibold text-gray-800">
+                  <tr key={adj._id} className="hover:bg-gray-700/50 transition">
+                    <td className="px-6 py-4 font-semibold text-white">
                       {adj.product?.name}
                     </td>
                     <td className="px-6 py-4 font-mono text-xs text-gray-400">
@@ -185,8 +185,8 @@ const Adjustments = () => {
                     </td>
                     <td className="px-6 py-4">
                       <span className={`px-3 py-1 rounded-full text-xs font-bold capitalize ${adj.type === "addition"
-                        ? "bg-emerald-100 text-emerald-700"
-                        : "bg-red-100 text-red-700"
+                        ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
+                        : "bg-red-500/20 text-red-300 border border-red-500/30"
                         }`}>
                         {adj.type}
                       </span>
@@ -199,13 +199,13 @@ const Adjustments = () => {
                         {adj.type === "addition" ? "+" : "-"}{adj.quantity}
                       </span>
                     </td>
-                    <td className="px-6 py-4 font-semibold text-gray-700">
+                    <td className="px-6 py-4 font-semibold text-gray-300">
                       {adj.product?.stock} {adj.product?.unit}
                     </td>
                     <td className="px-6 py-4 text-gray-400 text-xs">
                       {adj.reason || "—"}
                     </td>
-                    <td className="px-6 py-4 text-gray-600">
+                    <td className="px-6 py-4 text-gray-400">
                       {adj.createdBy?.name}
                     </td>
                     <td className="px-6 py-4 text-gray-400 text-xs">
@@ -229,15 +229,15 @@ const Adjustments = () => {
       {/* Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md mx-auto">
+          <div className="bg-gray-800 rounded-2xl shadow-xl shadow-black/40 w-full max-w-md mx-auto">
 
-            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
-              <h2 className="text-lg font-bold text-gray-800">
+            <div className="px-6 py-4 border-b border-gray-700 flex items-center justify-between">
+              <h2 className="text-lg font-bold text-white">
                 ➕ New Adjustment
               </h2>
               <button
                 onClick={() => setShowModal(false)}
-                className="text-gray-400 hover:text-gray-600 text-2xl font-bold"
+                className="text-gray-400 hover:text-gray-400 text-2xl font-bold"
               >
                 ✕
               </button>
@@ -245,21 +245,21 @@ const Adjustments = () => {
 
             <form onSubmit={handleSubmit} className="p-6 space-y-4">
               {error && (
-                <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-xl text-sm">
+                <div className="bg-red-500/10 border border-red-500/30 text-red-400 px-4 py-3 rounded-xl text-sm">
                   {error}
                 </div>
               )}
 
               {/* Product */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-300 mb-1">
                   Product *
                 </label>
                 <select
                   value={form.product}
                   onChange={(e) => setForm({ ...form, product: e.target.value })}
                   required
-                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                  className="w-full border border-gray-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
                 >
                   <option value="">Select Product</option>
                   {products.map((p) => (
@@ -272,7 +272,7 @@ const Adjustments = () => {
 
               {/* Type */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-300 mb-2">
                   Adjustment Type *
                 </label>
                 <div className="grid grid-cols-2 gap-3">
@@ -280,8 +280,8 @@ const Adjustments = () => {
                     type="button"
                     onClick={() => setForm({ ...form, type: "addition" })}
                     className={`py-3 rounded-xl text-sm font-semibold transition ${form.type === "addition"
-                      ? "bg-indigo-600 hover:bg-gray-800 cursor-pointer text-white"
-                      : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                      ? "bg-indigo-600 hover:bg-indigo-500 cursor-pointer text-white"
+                      : "bg-gray-100 text-gray-400 hover:bg-gray-200"
                       }`}
                   >
                     Addition
@@ -291,7 +291,7 @@ const Adjustments = () => {
                     onClick={() => setForm({ ...form, type: "subtraction" })}
                     className={`py-3 rounded-xl text-sm font-semibold transition ${form.type === "subtraction"
                       ? "bg-red-500 text-white"
-                      : "bg-gray-800 hover:bg-indigo-600 cursor-pointer text-white"
+                      : "bg-gray-700 hover:bg-gray-600 cursor-pointer text-white"
                       }`}
                   >
                     Subtraction
@@ -301,7 +301,7 @@ const Adjustments = () => {
 
               {/* Quantity */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-300 mb-1">
                   Quantity *
                 </label>
                 <input
@@ -311,13 +311,13 @@ const Adjustments = () => {
                   required
                   min="1"
                   placeholder="Enter quantity"
-                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                  className="w-full border border-gray-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
                 />
               </div>
 
               {/* Reason */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-300 mb-1">
                   Reason
                 </label>
                 <textarea
@@ -325,7 +325,7 @@ const Adjustments = () => {
                   onChange={(e) => setForm({ ...form, reason: e.target.value })}
                   rows={3}
                   placeholder="Why are you adjusting stock?"
-                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 resize-none"
+                  className="w-full border border-gray-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 resize-none"
                 />
               </div>
 
@@ -334,7 +334,7 @@ const Adjustments = () => {
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="flex-1 py-2.5 rounded-xl border border-gray-200 text-gray-600 hover:bg-gray-50 text-sm font-medium transition"
+                  className="flex-1 py-2.5 rounded-xl border border-gray-700 text-gray-400 hover:bg-gray-700/50 text-sm font-medium transition"
                 >
                   Cancel
                 </button>

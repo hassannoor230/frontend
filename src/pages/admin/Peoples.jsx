@@ -102,25 +102,25 @@ const Peoples = () => {
   );
 
   const getRoleBadge = (role) => {
-    if (role === "admin") return "bg-indigo-100 text-indigo-700";
-    if (role === "cashier") return "bg-emerald-100 text-emerald-700";
-    return "bg-orange-100 text-orange-700";
+    if (role === "admin") return "bg-indigo-500/20 text-indigo-300 border border-indigo-500/30";
+    if (role === "cashier") return "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30";
+    return "bg-orange-500/20 text-orange-300 border border-orange-500/30";
   };
 
   return (
     <div className="space-y-6">
 
       {/* Header */}
-      <div className="bg-white rounded-2xl p-5 sm:p-6 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="bg-gray-800 rounded-2xl p-5 sm:p-6 shadow-md shadow-black/20 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-800">Peoples</h1>
+          <h1 className="text-2xl font-bold text-white">Peoples</h1>
           <p className="text-sm text-gray-400 mt-1">
             Manage system users and roles
           </p>
         </div>
         <button
           onClick={openAddModal}
-          className="w-full sm:w-auto bg-gray-800 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl font-semibold text-sm transition"
+          className="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-2.5 rounded-xl font-semibold text-sm transition shadow-md shadow-indigo-500/20"
         >
           + Add User
         </button>
@@ -128,19 +128,19 @@ const Peoples = () => {
 
       {/* Stats */}
       <div className="grid grid-cols-3 gap-3 sm:gap-4">
-        <div className="bg-blue-300 rounded-2xl p-4 shadow-sm text-center">
-          <p className="text-xs text-black mb-1">Total Users</p>
-          <p className="text-2xl font-bold text-black">{users.length}</p>
+        <div className="bg-blue-500/20 border border-blue-500/30 rounded-2xl p-4 shadow-md shadow-black/20 text-center">
+          <p className="text-xs text-gray-300 mb-1">Total Users</p>
+          <p className="text-2xl font-bold text-white">{users.length}</p>
         </div>
-        <div className="bg-yellow-200 rounded-2xl p-4 shadow-sm text-center">
-          <p className="text-xs text-black mb-1">Active</p>
-          <p className="text-2xl font-bold text-black">
+        <div className="bg-yellow-500/20 border border-yellow-500/30 rounded-2xl p-4 shadow-md shadow-black/20 text-center">
+          <p className="text-xs text-gray-300 mb-1">Active</p>
+          <p className="text-2xl font-bold text-white">
             {users.filter((u) => u.isActive).length}
           </p>
         </div>
-        <div className="bg-red-200 rounded-2xl p-4 shadow-sm text-center">
-          <p className="text-xs text-black mb-1">Inactive</p>
-          <p className="text-2xl font-bold text-black">
+        <div className="bg-red-500/20 border border-red-500/30 rounded-2xl p-4 shadow-md shadow-black/20 text-center">
+          <p className="text-xs text-gray-300 mb-1">Inactive</p>
+          <p className="text-2xl font-bold text-white">
             {users.filter((u) => !u.isActive).length}
           </p>
         </div>
@@ -157,7 +157,7 @@ const Peoples = () => {
           placeholder="Search products..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full border border-gray-200 rounded-xl pl-10 pr-3 py-2 text-sm 
+          className="w-full border border-gray-700 rounded-xl pl-10 pr-3 py-2 text-sm 
                      focus:outline-none focus:ring-2 focus:ring-gray-800"
         />
       </div>
@@ -170,15 +170,15 @@ const Peoples = () => {
           filtered.map((user) => (
             <div
               key={user._id}
-              className="bg-white rounded-2xl shadow-sm p-5 space-y-3"
+              className="bg-gray-800 rounded-2xl shadow-md shadow-black/20 p-5 space-y-3"
             >
               {/* Avatar + Info */}
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-full bg-indigo-100 flex items-center justify-center text-xl font-bold text-indigo-600">
+                <div className="w-12 h-12 rounded-full bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-xl font-bold text-indigo-400">
                   {user.name.charAt(0).toUpperCase()}
                 </div>
                 <div>
-                  <p className="font-bold text-gray-800">{user.name}</p>
+                  <p className="font-bold text-white">{user.name}</p>
                   <p className="text-xs text-gray-400">{user.email}</p>
                 </div>
               </div>
@@ -188,8 +188,8 @@ const Peoples = () => {
                   {user.role}
                 </span>
                 <span className={`px-3 py-1 rounded-full text-xs font-medium ${user.isActive
-                    ? "bg-emerald-100 text-emerald-700"
-                    : "bg-red-100 text-red-700"
+                    ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
+                    : "bg-red-500/20 text-red-300 border border-red-500/30"
                   }`}>
                   {user.isActive ? "Active" : "Inactive"}
                 </span>
@@ -230,11 +230,11 @@ const Peoples = () => {
       </div>
 
       {/* Desktop Table */}
-      <div className="hidden lg:block bg-white rounded-2xl shadow-sm overflow-hidden">
+      <div className="hidden lg:block bg-gray-800 rounded-2xl shadow-md shadow-black/20 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="bg-gray-50 text-gray-500 text-xs uppercase tracking-wider text-left">
+              <tr className="bg-gray-900 text-gray-500 text-xs uppercase tracking-wider text-left">
                 <th className="px-6 py-4">User</th>
                 <th className="px-6 py-4">Email</th>
                 <th className="px-6 py-4">Role</th>
@@ -244,7 +244,7 @@ const Peoples = () => {
                 <th className="px-6 py-4">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-50">
+            <tbody className="divide-y divide-gray-700">
               {loading ? (
                 <tr>
                   <td colSpan="7" className="text-center py-10 text-gray-400">
@@ -253,28 +253,28 @@ const Peoples = () => {
                 </tr>
               ) : filtered.length > 0 ? (
                 filtered.map((user) => (
-                  <tr key={user._id} className="hover:bg-gray-50 transition">
+                  <tr key={user._id} className="hover:bg-gray-700/50 transition">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center font-bold text-indigo-600">
+                        <div className="w-10 h-10 rounded-full bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center font-bold text-indigo-400">
                           {user.name.charAt(0).toUpperCase()}
                         </div>
-                        <p className="font-semibold text-gray-800">{user.name}</p>
+                        <p className="font-semibold text-white">{user.name}</p>
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-gray-500">{user.email}</td>
+                    <td className="px-6 py-4 text-gray-400">{user.email}</td>
                     <td className="px-6 py-4">
                       <span className={`px-3 py-1 rounded-full text-xs font-medium capitalize ${getRoleBadge(user.role)}`}>
                         {user.role}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-gray-500">
+                    <td className="px-6 py-4 text-gray-400">
                       {user.phone || "—"}
                     </td>
                     <td className="px-6 py-4">
                       <span className={`px-3 py-1 rounded-full text-xs font-medium ${user.isActive
-                          ? "bg-emerald-100 text-emerald-700"
-                          : "bg-red-100 text-red-700"
+                          ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
+                          : "bg-red-500/20 text-red-300 border border-red-500/30"
                         }`}>
                         {user.isActive ? "Active" : "Inactive"}
                       </span>
@@ -286,19 +286,19 @@ const Peoples = () => {
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() => openEditModal(user)}
-                          className="bg-indigo-50 hover:bg-indigo-100 text-indigo-600 px-3 py-1.5 rounded-lg text-xs font-medium transition"
+                          className="bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-300 px-3 py-1.5 rounded-lg text-xs font-medium transition"
                         >
                           Edit
                         </button>
                         <button
                           onClick={() => handleToggleActive(user)}
-                          className="bg-yellow-50 hover:bg-yellow-100 text-yellow-600 px-3 py-1.5 rounded-lg text-xs font-medium transition"
+                          className="bg-yellow-500/20 hover:bg-yellow-500/30 text-yellow-300 px-3 py-1.5 rounded-lg text-xs font-medium transition"
                         >
                           {user.isActive ? "Deactivate" : "Activate"}
                         </button>
                         <button
                           onClick={() => handleDelete(user._id)}
-                          className="bg-red-50 hover:bg-red-100 text-red-600 px-3 py-1.5 rounded-lg text-xs font-medium transition"
+                          className="bg-red-500/20 hover:bg-red-500/30 text-red-300 px-3 py-1.5 rounded-lg text-xs font-medium transition"
                         >
                           Delete
                         </button>
@@ -322,16 +322,16 @@ const Peoples = () => {
       {/* Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto">
+          <div className="bg-gray-800 rounded-2xl shadow-xl shadow-black/40 w-full max-w-md max-h-[90vh] overflow-y-auto">
 
             {/* Modal Header */}
-            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between sticky top-0 bg-white rounded-t-2xl">
-              <h2 className="text-lg font-bold text-gray-800">
+            <div className="px-6 py-4 border-b border-gray-700 flex items-center justify-between sticky top-0 bg-gray-800 rounded-t-2xl">
+              <h2 className="text-lg font-bold text-white">
                 {editUser ? "✏️ Edit User" : "➕ Add New User"}
               </h2>
               <button
                 onClick={() => setShowModal(false)}
-                className="text-gray-400 hover:text-gray-600 text-2xl font-bold leading-none"
+                className="text-gray-400 hover:text-gray-400 text-2xl font-bold leading-none"
               >
                 ✕
               </button>
@@ -340,14 +340,14 @@ const Peoples = () => {
             {/* Form */}
             <form onSubmit={handleSubmit} className="p-6 space-y-4">
               {error && (
-                <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-xl text-sm">
+                <div className="bg-red-500/10 border border-red-500/30 text-red-400 px-4 py-3 rounded-xl text-sm">
                   {error}
                 </div>
               )}
 
               {/* Name */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-300 mb-1">
                   Full Name *
                 </label>
                 <input
@@ -356,13 +356,13 @@ const Peoples = () => {
                   onChange={(e) => setForm({ ...form, name: e.target.value })}
                   required
                   placeholder="John Doe"
-                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                  className="w-full border border-gray-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
                 />
               </div>
 
               {/* Email */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-300 mb-1">
                   Email Address *
                 </label>
                 <input
@@ -372,13 +372,13 @@ const Peoples = () => {
                   required
                   placeholder="john@pos.com"
                   disabled={!!editUser}
-                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 disabled:bg-gray-50 disabled:text-gray-400"
+                  className="w-full border border-gray-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 disabled:bg-gray-50 disabled:text-gray-400"
                 />
               </div>
 
               {/* Password */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-300 mb-1">
                   Password {editUser ? "(Leave blank to keep same)" : "*"}
                 </label>
                 <input
@@ -387,19 +387,19 @@ const Peoples = () => {
                   onChange={(e) => setForm({ ...form, password: e.target.value })}
                   required={!editUser}
                   placeholder="••••••••"
-                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                  className="w-full border border-gray-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
                 />
               </div>
 
               {/* Role */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-300 mb-1">
                   Role *
                 </label>
                 <select
                   value={form.role}
                   onChange={(e) => setForm({ ...form, role: e.target.value })}
-                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                  className="w-full border border-gray-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
                 >
                   <option value="cashier">Cashier</option>
                   <option value="inventory">Inventory Manager</option>
@@ -409,7 +409,7 @@ const Peoples = () => {
 
               {/* Phone */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-300 mb-1">
                   Phone Number
                 </label>
                 <input
@@ -417,14 +417,14 @@ const Peoples = () => {
                   value={form.phone}
                   onChange={(e) => setForm({ ...form, phone: e.target.value })}
                   placeholder="03001234567"
-                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                  className="w-full border border-gray-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
                 />
               </div>
 
               {/* Active Toggle */}
               {editUser && (
-                <div className="flex items-center justify-between bg-gray-50 rounded-xl px-4 py-3">
-                  <span className="text-sm font-medium text-gray-700">
+                <div className="flex items-center justify-between bg-gray-900/50 rounded-xl px-4 py-3 border border-gray-700">
+                  <span className="text-sm font-medium text-gray-300">
                     Account Active
                   </span>
                   <button
@@ -444,7 +444,7 @@ const Peoples = () => {
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="px-5 py-2.5 rounded-xl border border-gray-200 text-gray-600 hover:bg-gray-50 text-sm font-medium transition"
+                  className="px-5 py-2.5 rounded-xl border border-gray-700 text-gray-400 hover:bg-gray-700/50 text-sm font-medium transition"
                 >
                   Cancel
                 </button>

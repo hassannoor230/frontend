@@ -1,868 +1,555 @@
 import { useEffect, useState, useMemo } from "react";
 import API from "../../api/axios";
 import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
+  AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line
 } from "recharts";
 import {
   FiShoppingCart, FiPackage, FiUsers, FiDollarSign,
-  FiAlertTriangle, FiRefreshCw, FiCalendar, FiTrendingUp,
-  FiFilter
+  FiAlertTriangle, FiTrendingUp, FiFilter, FiRefreshCw
 } from "react-icons/fi";
 import { MdPointOfSale, MdPayments } from "react-icons/md";
-import { BsCheckCircleFill, BsGraphUpArrow } from "react-icons/bs";
-import { HiOutlineCurrencyRupee } from "react-icons/hi2";
+import { BsCheckCircleFill, BsGraphUpArrow, BsBoxSeam } from "react-icons/bs";
 import { RiStockLine } from "react-icons/ri";
-import { FaMoneyCheckDollar } from "react-icons/fa6";
+import { FaMoneyCheckDollar, FaFire } from "react-icons/fa6";
+import { HiSparkles } from "react-icons/hi2";
+import { BsLightningChargeFill } from "react-icons/bs";
 
-const COLORS = ["#6366f1","#22c55e","#f59e0b","#ec4899","#06b6d4","#f97316","#8b5cf6","#14b8a6"];
+/* ─── Font + CSS Injection ─── */
+const injectStyles = () => {
+  if (document.getElementById("luxury-dash-styles")) return;
+  const link = document.createElement("link");
+  link.rel = "stylesheet";
+  link.href = "https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=DM+Serif+Display:ital@0;1&display=swap";
+  document.head.appendChild(link);
+  const style = document.createElement("style");
+  style.id = "luxury-dash-styles";
+  style.textContent = `
+    .ld-root * { box-sizing: border-box; }
+    .ld-root { font-family: 'Outfit', sans-serif; }
+    .ld-serif { font-family: 'DM Serif Display', serif; }
+    @keyframes ld-fadeup { from { opacity:0; transform:translateY(18px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes ld-spin { to { transform:rotate(360deg); } }
+    @keyframes ld-pulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.15);opacity:.7} }
+    @keyframes ld-glow { 0%,100%{text-shadow:0 0 0 transparent} 50%{text-shadow:0 0 24px rgba(245,158,11,.35)} }
+    @keyframes ld-shimmer { 0%{background-position:-400px 0} 100%{background-position:400px 0} }
+    .ld-fu  { animation: ld-fadeup .55s cubic-bezier(.23,1,.32,1) both; }
+    .ld-fu1 { animation: ld-fadeup .55s .06s cubic-bezier(.23,1,.32,1) both; }
+    .ld-fu2 { animation: ld-fadeup .55s .12s cubic-bezier(.23,1,.32,1) both; }
+    .ld-fu3 { animation: ld-fadeup .55s .18s cubic-bezier(.23,1,.32,1) both; }
+    .ld-fu4 { animation: ld-fadeup .55s .24s cubic-bezier(.23,1,.32,1) both; }
+    .ld-fu5 { animation: ld-fadeup .55s .30s cubic-bezier(.23,1,.32,1) both; }
+    .ld-fu6 { animation: ld-fadeup .55s .36s cubic-bezier(.23,1,.32,1) both; }
+    .ld-fu7 { animation: ld-fadeup .55s .42s cubic-bezier(.23,1,.32,1) both; }
+    .ld-fu8 { animation: ld-fadeup .55s .48s cubic-bezier(.23,1,.32,1) both; }
+    .ld-gold { animation: ld-glow 3s ease-in-out infinite; }
+    .ld-spin { animation: ld-spin 1s linear infinite; }
+    .ld-pulse-dot { animation: ld-pulse 2s ease-in-out infinite; }
+    .ld-card { transition: transform .22s ease, box-shadow .22s ease; }
+    .ld-card:hover { transform: translateY(-3px); }
+    .ld-row:hover { background: rgba(255,255,255,.028) !important; }
+    ::-webkit-scrollbar { width:3px; height:3px; }
+    ::-webkit-scrollbar-thumb { background:rgba(255,255,255,.08); border-radius:2px; }
+    ::-webkit-scrollbar-track { background:transparent; }
+    .ld-input { background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08); border-radius:10px; padding:8px 14px; color:#fff; font-size:13px; outline:none; font-family:'Outfit',sans-serif; color-scheme:dark; transition:border .2s; }
+    .ld-input:focus { border-color:rgba(99,102,241,.5); }
+    @media(max-width:768px){.ld-hide-mob{display:none!important}.ld-show-mob{display:block!important}}
+    @media(min-width:769px){.ld-hide-mob{display:block!important}.ld-show-mob{display:none!important}}
+  `;
+  document.head.appendChild(style);
+};
 
-// ─────────────────────────────────────────────
-// Stat Card
-// ─────────────────────────────────────────────
-const StatCard = ({ title, value, icon, from, to, sub }) => (
-  <div
-    className="relative overflow-hidden rounded-2xl p-4 sm:p-5 text-white shadow-lg"
-    style={{ background: `linear-gradient(135deg, ${from}, ${to})` }}
-  >
-    <div className="absolute -right-4 -top-4 w-20 h-20 rounded-full bg-white/10" />
-    <div className="relative flex items-start justify-between gap-2">
-      <div className="flex-1 min-w-0">
-        <p className="text-xs font-semibold uppercase tracking-wider opacity-80 truncate leading-tight">{title}</p>
-        <h3 className="text-lg sm:text-2xl font-extrabold mt-1 leading-tight break-all">{value}</h3>
-        {sub && <p className="text-xs opacity-70 mt-1 truncate">{sub}</p>}
-      </div>
-      <div className="text-xl sm:text-2xl bg-white/20 p-2 sm:p-2.5 rounded-xl">{icon}</div>
+const PALETTE = ["#6366f1","#f59e0b","#10b981","#ec4899","#06b6d4","#f97316","#8b5cf6","#14b8a6"];
+const FILTERS = [
+  { key:"today", label:"Today" },
+  { key:"weekly", label:"7 Days" },
+  { key:"monthly", label:"Month" },
+  { key:"custom", label:"Custom" },
+];
+
+const getRange = (filter, cs, ce) => {
+  const now = new Date();
+  let s = new Date(), e = new Date();
+  e.setHours(23,59,59,999);
+  if (filter==="today") { s.setHours(0,0,0,0); }
+  else if (filter==="weekly") { s.setDate(now.getDate()-6); s.setHours(0,0,0,0); }
+  else if (filter==="monthly") { s = new Date(now.getFullYear(),now.getMonth(),1); s.setHours(0,0,0,0); }
+  else if (filter==="custom"&&cs&&ce) { s=new Date(cs); s.setHours(0,0,0,0); e=new Date(ce); e.setHours(23,59,59,999); }
+  else { s.setDate(now.getDate()-6); s.setHours(0,0,0,0); }
+  return { s, e };
+};
+
+/* ─── Tooltip ─── */
+const Tip = ({ active, payload, label }) => {
+  if (!active||!payload?.length) return null;
+  return (
+    <div style={{ background:"rgba(8,9,18,.95)", border:"1px solid rgba(255,255,255,.1)", borderRadius:12, padding:"10px 16px", backdropFilter:"blur(20px)", boxShadow:"0 8px 32px rgba(0,0,0,.5)" }}>
+      <p style={{ color:"rgba(255,255,255,.4)", fontSize:11, marginBottom:4, fontFamily:"Outfit" }}>{label}</p>
+      <p style={{ color:"#f59e0b", fontWeight:800, fontSize:14, fontFamily:"Outfit" }}>Rs. {Number(payload[0]?.value).toLocaleString()}</p>
     </div>
+  );
+};
+
+/* ─── Clock ─── */
+const Clock = () => {
+  const [t, setT] = useState(new Date());
+  useEffect(() => { const id = setInterval(()=>setT(new Date()),1000); return ()=>clearInterval(id); },[]);
+  return <span style={{ fontSize:12, color:"rgba(255,255,255,.28)", fontVariantNumeric:"tabular-nums", letterSpacing:1 }}>{t.toLocaleTimeString("en-PK",{hour:"2-digit",minute:"2-digit",second:"2-digit"})}</span>;
+};
+
+/* ─── KPI Card ─── */
+const KPI = ({ title, value, sub, icon, color, cls="" }) => (
+  <div className={`ld-card ${cls}`} style={{
+    background:"linear-gradient(135deg, rgba(255,255,255,.045) 0%, rgba(255,255,255,.012) 100%)",
+    border:"1px solid rgba(255,255,255,.08)",
+    borderRadius:20,
+    padding:"22px 22px 20px",
+    position:"relative",
+    overflow:"hidden",
+    boxShadow:"0 4px 24px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.06)",
+  }}>
+    {/* Glow orb */}
+    <div style={{ position:"absolute", top:-30, right:-30, width:100, height:100, borderRadius:"50%", background:`radial-gradient(circle, ${color}28 0%, transparent 70%)`, pointerEvents:"none" }} />
+    {/* Bottom line accent */}
+    <div style={{ position:"absolute", bottom:0, left:0, width:"50%", height:2, background:`linear-gradient(90deg, ${color}, transparent)` }} />
+
+    <div style={{ display:"flex", alignItems:"flex-start", justifyContent:"space-between", marginBottom:18 }}>
+      <div style={{ width:42, height:42, borderRadius:13, background:`${color}18`, border:`1px solid ${color}35`, display:"flex", alignItems:"center", justifyContent:"center", color, fontSize:19 }}>
+        {icon}
+      </div>
+      <span style={{ fontSize:10, color:"rgba(255,255,255,.28)", textTransform:"uppercase", letterSpacing:"2.5px", fontWeight:600, lineHeight:1.4, textAlign:"right", maxWidth:100 }}>{title}</span>
+    </div>
+
+    <div className="ld-gold" style={{ fontSize:"clamp(20px,3vw,28px)", fontWeight:900, color:"#fff", lineHeight:1, letterSpacing:"-0.5px" }}>{value}</div>
+    {sub && <p style={{ fontSize:11, color:"rgba(255,255,255,.3)", marginTop:6, fontWeight:400 }}>{sub}</p>}
   </div>
 );
 
-// ─────────────────────────────────────────────
-// Tooltips
-// ─────────────────────────────────────────────
-const BarTip = ({ active, payload, label }) => {
-  if (!active || !payload?.length) return null;
-  return (
-    <div className="bg-white border border-gray-100 rounded-xl shadow-xl p-3 text-xs">
-      <p className="font-bold text-gray-600 mb-1 border-b pb-1">{label}</p>
-      {payload.map((p, i) => (
-        <div key={i} className="flex justify-between gap-4">
-          <span style={{ color: p.fill }} className="font-medium">{p.name}</span>
-          <span className="font-bold text-gray-700">Rs. {Number(p.value).toLocaleString()}</span>
-        </div>
-      ))}
+/* ─── Badge ─── */
+const Badge = ({ status }) => {
+  const map = {
+    completed: { bg:"rgba(16,185,129,.15)", c:"#10b981", b:"rgba(16,185,129,.3)" },
+    pending:   { bg:"rgba(245,158,11,.15)", c:"#f59e0b", b:"rgba(245,158,11,.3)" },
+    refunded:  { bg:"rgba(239,68,68,.15)",  c:"#ef4444", b:"rgba(239,68,68,.3)" },
+  };
+  const s = map[status] || map.refunded;
+  return <span style={{ padding:"3px 10px", borderRadius:20, background:s.bg, color:s.c, border:`1px solid ${s.b}`, fontSize:11, fontWeight:700, textTransform:"capitalize", whiteSpace:"nowrap" }}>{status}</span>;
+};
+
+/* ─── Section Header ─── */
+const SHead = ({ title, sub, right }) => (
+  <div style={{ padding:"20px 24px 16px", borderBottom:"1px solid rgba(255,255,255,.06)", display:"flex", alignItems:"center", justifyContent:"space-between" }}>
+    <div>
+      <h2 style={{ fontSize:15, fontWeight:700, color:"#fff", margin:0, letterSpacing:"-0.2px" }}>{title}</h2>
+      {sub && <p style={{ fontSize:12, color:"rgba(255,255,255,.3)", marginTop:3 }}>{sub}</p>}
     </div>
-  );
-};
+    {right}
+  </div>
+);
 
-const PieTip = ({ active, payload }) => {
-  if (!active || !payload?.length) return null;
-  return (
-    <div className="bg-white border border-gray-100 rounded-xl shadow-xl p-3 text-xs">
-      <p className="font-bold capitalize mb-1" style={{ color: payload[0].payload.fill }}>{payload[0].name}</p>
-      <p className="text-gray-700 font-semibold">Rs. {Number(payload[0].value).toLocaleString()}</p>
-    </div>
-  );
-};
+/* ─── Chip ─── */
+const Chip = ({ children, color="#6366f1" }) => (
+  <span style={{ padding:"3px 12px", borderRadius:20, background:`${color}18`, border:`1px solid ${color}35`, fontSize:11, color, fontWeight:700, display:"inline-flex", alignItems:"center", gap:5 }}>{children}</span>
+);
 
-// ─────────────────────────────────────────────
-// Date Filter Buttons
-// ─────────────────────────────────────────────
-const FILTERS = [
-  { key: "today",   label: "Today" },
-  { key: "weekly",  label: "Weekly" },
-  { key: "monthly", label: "Monthly" },
-  { key: "custom",  label: "Custom" },
-];
-
-// ─────────────────────────────────────────────
-// Helper: get date range from filter
-// ─────────────────────────────────────────────
-const getDateRange = (filter, customStart, customEnd) => {
-  const now = new Date();
-  let start = new Date();
-  let end   = new Date();
-  end.setHours(23, 59, 59, 999);
-
-  if (filter === "today") {
-    start.setHours(0, 0, 0, 0);
-  } else if (filter === "weekly") {
-    start.setDate(now.getDate() - 6);
-    start.setHours(0, 0, 0, 0);
-  } else if (filter === "monthly") {
-    start = new Date(now.getFullYear(), now.getMonth(), 1);
-    start.setHours(0, 0, 0, 0);
-  } else if (filter === "custom" && customStart && customEnd) {
-    start = new Date(customStart);
-    start.setHours(0, 0, 0, 0);
-    end = new Date(customEnd);
-    end.setHours(23, 59, 59, 999);
-  } else {
-    // default: last 7 days
-    start.setDate(now.getDate() - 6);
-    start.setHours(0, 0, 0, 0);
-  }
-  return { start, end };
-};
-
-// ─────────────────────────────────────────────
-// Main Dashboard
-// ─────────────────────────────────────────────
+/* ════════════════════════════════════════
+   MAIN COMPONENT
+════════════════════════════════════════ */
 const Dashboard = () => {
+  useEffect(() => { injectStyles(); }, []);
+
   const [sales,    setSales]    = useState([]);
   const [products, setProducts] = useState([]);
   const [users,    setUsers]    = useState([]);
   const [loading,  setLoading]  = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
-  const [lastUpdated, setLastUpdated] = useState(new Date());
+  const [spinning, setSpinning] = useState(false);
+  const [filter,   setFilter]   = useState("weekly");
+  const [cs, setCs] = useState("");
+  const [ce, setCe] = useState("");
+  const [showC, setShowC] = useState(false);
 
-  // ── Date filter state
-  const [activeFilter, setActiveFilter] = useState("weekly");
-  const [customStart,  setCustomStart]  = useState("");
-  const [customEnd,    setCustomEnd]    = useState("");
-  const [showCustom,   setShowCustom]   = useState(false);
-
-  // ── Fetch
-  const fetchAll = async (manual = false) => {
-    if (manual) setRefreshing(true);
+  const fetchAll = async (manual=false) => {
+    if (manual) setSpinning(true);
     try {
-      const [sRes, pRes, uRes] = await Promise.all([
-        API.get("/sales"),
-        API.get("/products"),
-        API.get("/users"),
-      ]);
-      setSales(sRes.data.data    || []);
-      setProducts(pRes.data.data || []);
-      setUsers(uRes.data.data    || []);
-      setLastUpdated(new Date());
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-      setRefreshing(false);
-    }
+      const [sr,pr,ur] = await Promise.all([API.get("/sales"),API.get("/products"),API.get("/users")]);
+      setSales(sr.data.data||[]); setProducts(pr.data.data||[]); setUsers(ur.data.data||[]);
+    } catch(e){ console.error(e); }
+    finally { setLoading(false); setSpinning(false); }
   };
 
-  useEffect(() => {
-    fetchAll();
-    const t = setInterval(() => fetchAll(false), 20000);
-    return () => clearInterval(t);
-  }, []);
+  useEffect(() => { fetchAll(); const t=setInterval(()=>fetchAll(false),30000); return()=>clearInterval(t); },[]);
 
-  // ── Filter change handler
-  const handleFilter = (key) => {
-    setActiveFilter(key);
-    if (key === "custom") {
-      setShowCustom(true);
-    } else {
-      setShowCustom(false);
-    }
-  };
+  const { s, e } = useMemo(()=>getRange(filter,cs,ce),[filter,cs,ce]);
+  const completed  = useMemo(()=>sales.filter(x=>x.status==="completed"),[sales]);
+  const filtered   = useMemo(()=>completed.filter(x=>{ const d=new Date(x.createdAt); return d>=s&&d<=e; }),[completed,s,e]);
 
-  // ─────────────────────────────────────────
-  // COMPUTED — useMemo so recalculates when
-  // filter or sales changes
-  // ─────────────────────────────────────────
-  const { start, end } = useMemo(
-    () => getDateRange(activeFilter, customStart, customEnd),
-    [activeFilter, customStart, customEnd]
-  );
+  const rev      = filtered.reduce((a,x)=>a+(x.total||0),0);
+  const tax      = filtered.reduce((a,x)=>a+(x.tax||0),0);
+  const disc     = filtered.reduce((a,x)=>a+(x.discount||0),0);
+  const todayS   = new Date(); todayS.setHours(0,0,0,0);
+  const todayRev = completed.filter(x=>new Date(x.createdAt)>=todayS).reduce((a,x)=>a+(x.total||0),0);
+  const todayCnt = completed.filter(x=>new Date(x.createdAt)>=todayS).length;
+  const lowStock = products.filter(p=>p.stock<=p.minStock);
+  const oos      = products.filter(p=>p.stock===0);
+  const recent   = [...filtered].sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt)).slice(0,8);
 
-  // All completed sales
-  const allCompleted = useMemo(
-    () => sales.filter((s) => s.status === "completed"),
-    [sales]
-  );
+  const barData = useMemo(()=>{
+    const m={};
+    filtered.forEach(x=>{ const d=new Date(x.createdAt); const k=filter==="today"?`${d.getHours()}:00`:d.toLocaleDateString("en-PK",{month:"short",day:"numeric"}); if(!m[k])m[k]={date:k,Revenue:0,_r:d}; m[k].Revenue+=x.total||0; });
+    return Object.values(m).sort((a,b)=>filter==="today"?parseInt(a.date)-parseInt(b.date):new Date(a._r)-new Date(b._r)).map(({_r,...r})=>r);
+  },[filtered,filter]);
 
-  // Filtered completed sales by date range
-  const filteredSales = useMemo(
-    () => allCompleted.filter((s) => {
-      const d = new Date(s.createdAt);
-      return d >= start && d <= end;
-    }),
-    [allCompleted, start, end]
-  );
+  const topProds = useMemo(()=>{
+    const m={};
+    filtered.forEach(x=>(x.items||[]).forEach(it=>{ if(!m[it.name])m[it.name]={name:it.name,v:0,q:0}; m[it.name].v+=it.total||0; m[it.name].q+=it.quantity||0; }));
+    return Object.values(m).sort((a,b)=>b.v-a.v).slice(0,6).map((p,i)=>({...p,fill:PALETTE[i%PALETTE.length]}));
+  },[filtered]);
 
-  // Stats from filtered sales
-  const totalRevenue  = filteredSales.reduce((sum, s) => sum + (s.total    || 0), 0);
-  const totalTax      = filteredSales.reduce((sum, s) => sum + (s.tax      || 0), 0);
-  const totalDiscount = filteredSales.reduce((sum, s) => sum + (s.discount || 0), 0);
+  const payPie = useMemo(()=>{
+    const m={};
+    filtered.forEach(x=>{ const k=x.paymentMethod||"other"; if(!m[k])m[k]={name:k.charAt(0).toUpperCase()+k.slice(1),value:0}; m[k].value+=x.total||0; });
+    return Object.values(m).map((p,i)=>({...p,fill:PALETTE[i%PALETTE.length]}));
+  },[filtered]);
 
-  // All time stats (not filtered)
-  const pendingSales  = sales.filter((s) => s.status === "pending");
-  const refundedSales = sales.filter((s) => s.status === "refunded");
+  const flabel = FILTERS.find(f=>f.key===filter)?.label||"7 Days";
 
-  // Today stats always (for header cards)
-  const todayStart = new Date(); todayStart.setHours(0,0,0,0);
-  const todaySales   = allCompleted.filter((s) => new Date(s.createdAt) >= todayStart);
-  const todayRevenue = todaySales.reduce((sum, s) => sum + (s.total || 0), 0);
+  const BG    = "#070a14";
+  const GLASS = { background:"linear-gradient(135deg,rgba(255,255,255,.042) 0%,rgba(255,255,255,.012) 100%)", border:"1px solid rgba(255,255,255,.075)", borderRadius:20, boxShadow:"0 4px 32px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.055)" };
+  const TH    = { padding:"11px 20px", fontSize:10, color:"rgba(255,255,255,.22)", textTransform:"uppercase", letterSpacing:"2px", textAlign:"left", fontWeight:700, borderBottom:"1px solid rgba(255,255,255,.055)", background:"rgba(255,255,255,.015)", fontFamily:"Outfit" };
+  const TD    = { padding:"13px 20px", fontSize:13, color:"rgba(255,255,255,.7)", fontFamily:"Outfit", borderBottom:"1px solid rgba(255,255,255,.03)" };
 
-  // Low stock
-  const lowStockProducts = products.filter((p) => p.stock <= p.minStock);
-  const outOfStock       = products.filter((p) => p.stock === 0);
-
-  // Recent 5 from filtered
-  const recentSales = [...filteredSales]
-    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-    .slice(0, 5);
-
-  // ── Bar chart: group filtered sales by date
-  // ── Sorted: previous days first, today last
-  const barData = useMemo(() => {
-    const map = {};
-    const todayDateStr = new Date().toLocaleDateString("en-PK", { month: "short", day: "numeric" });
-
-    filteredSales.forEach((sale) => {
-      const d = new Date(sale.createdAt);
-      let key;
-      if (activeFilter === "today") {
-        // Group by hour — store raw hour number for sorting
-        key = `${d.getHours()}:00`;
-      } else {
-        key = d.toLocaleDateString("en-PK", { month: "short", day: "numeric" });
-      }
-      if (!map[key]) map[key] = { date: key, Revenue: 0, Count: 0, _rawDate: d };
-      map[key].Revenue += sale.total || 0;
-      map[key].Count   += 1;
-    });
-
-    const entries = Object.values(map);
-
-    if (activeFilter === "today") {
-      // Sort by hour ascending (0:00, 1:00, ..., 23:00) — natural chronological order
-      entries.sort((a, b) => {
-        const hourA = parseInt(a.date.split(":")[0], 10);
-        const hourB = parseInt(b.date.split(":")[0], 10);
-        return hourA - hourB;
-      });
-    } else {
-      // Sort by actual date ascending → previous days first, today last
-      entries.sort((a, b) => new Date(a._rawDate) - new Date(b._rawDate));
-    }
-
-    // Remove internal helper field before returning
-    return entries.map(({ _rawDate, ...rest }) => rest);
-  }, [filteredSales, activeFilter]);
-
-  // ── Top products
-  const topProds = useMemo(() => {
-    const map = {};
-    filteredSales.forEach((sale) => {
-      (sale.items || []).forEach((item) => {
-        if (!map[item.name]) map[item.name] = { name: item.name, value: 0, qty: 0 };
-        map[item.name].value += item.total    || 0;
-        map[item.name].qty   += item.quantity || 0;
-      });
-    });
-    return Object.values(map)
-      .sort((a, b) => b.value - a.value)
-      .slice(0, 6)
-      .map((p, i) => ({ ...p, fill: COLORS[i % COLORS.length] }));
-  }, [filteredSales]);
-
-  // ── Payment pie
-  const payPie = useMemo(() => {
-    const map = {};
-    filteredSales.forEach((sale) => {
-      const m = sale.paymentMethod || "other";
-      if (!map[m]) map[m] = { name: m.charAt(0).toUpperCase() + m.slice(1), value: 0 };
-      map[m].value += sale.total || 0;
-    });
-    return Object.values(map).map((p, i) => ({ ...p, fill: COLORS[i % COLORS.length] }));
-  }, [filteredSales]);
-
-  const statusBg = (s) =>
-    s === "completed" ? "bg-emerald-100 text-emerald-700"
-    : s === "pending"   ? "bg-yellow-100 text-yellow-700"
-    : "bg-red-100 text-red-700";
-
-  const hr    = new Date().getHours();
-  const greet = hr < 12 ? "Good Morning" : hr < 17 ? "Good Afternoon" : "Good Evening";
-
-  const filterLabel = FILTERS.find((f) => f.key === activeFilter)?.label || "Weekly";
-
-  // ── Loading
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-center">
-          <div className="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-gray-500 font-medium text-sm">Loading Dashboard...</p>
-        </div>
+  if (loading) return (
+    <div className="ld-root" style={{ minHeight:"60vh", display:"flex", alignItems:"center", justifyContent:"center" }}>
+      <div style={{ textAlign:"center" }}>
+        <div className="ld-spin" style={{ width:44,height:44,border:"2px solid rgba(99,102,241,.15)",borderTop:"2px solid #6366f1",borderRadius:"50%",margin:"0 auto 16px" }}/>
+        <p style={{ color:"rgba(255,255,255,.25)",fontSize:12,letterSpacing:3,textTransform:"uppercase",fontFamily:"Outfit" }}>Loading</p>
       </div>
-    );
-  }
+    </div>
+  );
 
   return (
-    <div className="space-y-4 sm:space-y-5">
+    <div className="ld-root" style={{ background:BG, minHeight:"100vh", padding:"0 0 48px" }}>
 
-      {/* ══════════════════════════════════════
-          HEADER
-      ══════════════════════════════════════ */}
-      <div className="bg-white rounded-2xl px-4 sm:px-6 py-4 shadow-sm">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-          <div>
-            <h1 className="text-lg sm:text-xl font-bold text-gray-800">
-               <span className="text-gray-800">Admin POS</span>
-            </h1>
-          </div>
-        </div>
+      {/* Ambient blobs */}
+      <div style={{ position:"fixed",inset:0,pointerEvents:"none",zIndex:0,overflow:"hidden" }}>
+        <div style={{ position:"absolute",top:"-25%",left:"-15%",width:"55%",height:"55%",borderRadius:"50%",background:"radial-gradient(circle,rgba(99,102,241,.05) 0%,transparent 70%)" }}/>
+        <div style={{ position:"absolute",bottom:"-25%",right:"-15%",width:"55%",height:"55%",borderRadius:"50%",background:"radial-gradient(circle,rgba(245,158,11,.035) 0%,transparent 70%)" }}/>
+        <div style={{ position:"absolute",top:"40%",right:"20%",width:"30%",height:"30%",borderRadius:"50%",background:"radial-gradient(circle,rgba(16,185,129,.025) 0%,transparent 70%)" }}/>
       </div>
 
-      {/* ══════════════════════════════════════
-          DATE FILTER BAR
-      ══════════════════════════════════════ */}
-      <div className="bg-white rounded-2xl px-4 sm:px-6 py-4 shadow-sm">
-        <div className="flex items-center gap-2 mb-3">
-          <FiFilter className="text-indigo-500 text-sm" />
-          <span className="text-sm font-bold text-gray-700">Filter Period</span>
-          <span className="ml-auto text-xs text-gray-400">
-            {filteredSales.length} sales in period
-          </span>
-        </div>
+      <div style={{ position:"relative",zIndex:1,maxWidth:1440,margin:"0 auto",padding:"0 20px" }}>
 
-        {/* Filter Buttons */}
-        <div className="flex gap-2 flex-wrap">
-          {FILTERS.map((f) => (
-            <button
-              key={f.key}
-              onClick={() => handleFilter(f.key)}
-              className={`px-4 py-2 rounded-xl text-xs font-semibold transition flex-1 sm:flex-none min-w-0 ${
-                activeFilter === f.key
-                  ? "bg-gray-800 text-white shadow-md shadow-indigo-200"
-                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-              }`}
-            >
-              {f.label}
-            </button>
-          ))}
-        </div>
-
-        {/* Custom Date Inputs */}
-        {showCustom && (
-          <div className="mt-3 grid grid-cols-1 sm:grid-cols-3 gap-3">
+        {/* ══ HEADER ══ */}
+        <div className="ld-fu" style={{ padding:"32px 0 26px",borderBottom:"1px solid rgba(255,255,255,.06)",marginBottom:28 }}>
+          <div style={{ display:"flex",alignItems:"center",justifyContent:"space-between",flexWrap:"wrap",gap:16 }}>
             <div>
-              <label className="text-xs text-gray-500 mb-1 block font-medium">Start Date</label>
-              <input
-                type="date"
-                value={customStart}
-                onChange={(e) => setCustomStart(e.target.value)}
-                className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
-              />
+              <div style={{ display:"flex",alignItems:"center",gap:10,marginBottom:8 }}>
+                <div className="ld-pulse-dot" style={{ width:7,height:7,borderRadius:"50%",background:"#10b981" }}/>
+                <span style={{ fontSize:10,color:"#10b981",textTransform:"uppercase",letterSpacing:"3px",fontWeight:700 }}>Live System</span>
+                <Clock/>
+              </div>
+              <h1 className="ld-serif" style={{ fontSize:"clamp(26px,4vw,42px)",fontWeight:400,color:"#fff",margin:0,lineHeight:1.1 }}>
+                {new Date().getHours()<12?"Good Morning":new Date().getHours()<17?"Good Afternoon":"Good Evening"}
+                <span style={{ fontStyle:"italic",color:"rgba(255,255,255,.38)" }}> — Admin Panel</span>
+              </h1>
+              <p style={{ fontSize:13,color:"rgba(255,255,255,.28)",marginTop:7,fontWeight:400 }}>
+                {new Date().toLocaleDateString("en-PK",{weekday:"long",year:"numeric",month:"long",day:"numeric"})}
+              </p>
             </div>
-            <div>
-              <label className="text-xs text-gray-500 mb-1 block font-medium">End Date</label>
-              <input
-                type="date"
-                value={customEnd}
-                onChange={(e) => setCustomEnd(e.target.value)}
-                className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
-              />
-            </div>
-            <div className="flex items-end">
-              <button
-                onClick={() => {
-                  if (customStart && customEnd) setShowCustom(true);
-                }}
-                className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-xl text-sm font-semibold transition"
-              >
-                Apply
+            <div style={{ display:"flex",alignItems:"center",gap:10 }}>
+              <div style={{ textAlign:"right",paddingRight:16,borderRight:"1px solid rgba(255,255,255,.07)" }}>
+                <p style={{ fontSize:10,color:"rgba(255,255,255,.28)",textTransform:"uppercase",letterSpacing:2,margin:0 }}>Today's Revenue</p>
+                <p className="ld-gold" style={{ fontSize:22,fontWeight:900,color:"#f59e0b",margin:0 }}>Rs. {todayRev.toLocaleString()}</p>
+                <p style={{ fontSize:11,color:"rgba(255,255,255,.28)",margin:0 }}>{todayCnt} sales</p>
+              </div>
+              <button onClick={()=>fetchAll(true)} disabled={spinning}
+                style={{ display:"flex",alignItems:"center",gap:8,padding:"10px 18px",borderRadius:12,background:"rgba(255,255,255,.05)",border:"1px solid rgba(255,255,255,.09)",color:"rgba(255,255,255,.55)",fontSize:13,cursor:"pointer",transition:"all .2s",fontFamily:"Outfit" }}>
+                <FiRefreshCw className={spinning?"ld-spin":""}/>
+                Refresh
               </button>
             </div>
           </div>
-        )}
-
-        {/* Active range display */}
-        <p className="text-xs text-gray-400 mt-2">
-          📅 {start.toLocaleDateString("en-PK", { month: "short", day: "numeric", year: "numeric" })}
-          {" → "}
-          {end.toLocaleDateString("en-PK", { month: "short", day: "numeric", year: "numeric" })}
-        </p>
-      </div>
-
-      {/* ══════════════════════════════════════
-          ROW 1 — STAT CARDS (filtered)
-      ══════════════════════════════════════ */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        <StatCard
-          title={`${filterLabel} Revenue`}
-          value={`Rs. ${totalRevenue.toLocaleString()}`}
-          icon={<FaMoneyCheckDollar  />}
-          from="#06b6d4" to="#0891b2"
-          sub={`${filteredSales.length} sales`}
-        />
-        <StatCard
-          title={`${filterLabel} Sales`} 
-          value={filteredSales.length}
-          icon={<MdPointOfSale />}
-          from="#8b5cf6" to="#6d28d9"
-          sub={`Rs. ${totalRevenue.toLocaleString()}`}
-        />
-        <StatCard
-          title="Tax Collected"
-          value={`Rs. ${totalTax.toLocaleString()}`}
-          icon={<FiDollarSign />}
-          from="#f97316" to="#ea580c"
-          sub={`Discount: Rs. ${totalDiscount.toLocaleString()}`}
-        />
-        <StatCard
-          title="Products Sold"
-          value={filteredSales.reduce((sum, s) => sum + (s.items?.length || 0), 0)}
-          icon={<FiPackage />}
-          from="#ec4899" to="#be185d"
-          sub={`${topProds.length} unique items`}
-        />
-      </div>
-
-      {/* ══════════════════════════════════════
-          ROW 2 — ALWAYS STATS (not filtered)
-      ══════════════════════════════════════ */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        <StatCard
-          title="Today's Revenue"
-          value={`Rs. ${todayRevenue.toLocaleString()}`}
-          icon={<FiDollarSign />}
-          from="#f59e0b" to="#d97706"
-          sub={`${todaySales.length} sales today`}
-        />
-        <StatCard
-          title="Total Users"
-          value={users.length}
-          icon={<FiUsers />}
-          from="#10b981" to="#059669"
-          sub="System users"
-        />
-        <StatCard
-          title="Low Stock Alert"
-          value={lowStockProducts.length}
-          icon={<FiAlertTriangle />}
-          from="#ef4444" to="#dc2626"
-          sub={`${outOfStock.length} out of stock`}
-        />
-        <StatCard
-          title="Total Products"
-          value={products.length}
-          icon={<BsGraphUpArrow />}
-          from="#6366f1" to="#4f46e5"
-          sub={`${products.filter(p => p.isActive).length} active`}
-        />
-      </div>
-
-      {/* ══════════════════════════════════════
-          CHARTS — BAR + PIE
-      ══════════════════════════════════════ */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-5">
-
-        {/* Bar Chart */}
-        <div className="lg:col-span-2 bg-white rounded-2xl shadow-sm p-4 sm:p-6">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h2 className="font-bold text-gray-800 text-sm sm:text-base">
-                Sales Revenue — {filterLabel}
-              </h2>
-              <p className="text-xs text-gray-400 mt-0.5">
-                {barData.length} data points
-              </p>
-            </div>
-            <span className="text-xs bg-indigo-50 text-indigo-600 font-semibold px-2.5 py-1.5 rounded-full">
-              Rs. {totalRevenue.toLocaleString()}
-            </span>
-          </div>
-          {barData.length > 0 ? (
-            <ResponsiveContainer width="100%" height={220}>
-              <BarChart data={barData} barSize={28} margin={{ top: 5, right: 5, left: 0, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" vertical={false} />
-                <XAxis
-                  dataKey="date"
-                  tick={{ fontSize: 10, fill: "#9ca3af" }}
-                  axisLine={false} tickLine={false}
-                  interval="preserveStartEnd"
-                />
-                <YAxis
-                  tick={{ fontSize: 10, fill: "#9ca3af" }}
-                  axisLine={false} tickLine={false}
-                  tickFormatter={(v) => v >= 1000 ? `${(v / 1000).toFixed(0)}k` : v}
-                  width={35}
-                />
-                <Tooltip content={<BarTip />} cursor={{ fill: "#f9fafb" }} />
-                <Bar dataKey="Revenue" name="Revenue" fill="#6366f1" radius={[6, 6, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          ) : (
-            <div className="flex flex-col items-center justify-center h-48 text-gray-300">
-              <MdPointOfSale className="text-5xl mb-3" />
-              <p className="text-sm text-gray-400 font-medium">No sales in this period</p>
-            </div>
-          )}
         </div>
 
-        {/* Top Products Pie */}
-        <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-6">
-          <h2 className="font-bold text-gray-800 mb-1 text-sm sm:text-base">Top Products</h2>
-          <p className="text-xs text-gray-400 mb-4">By revenue — {filterLabel}</p>
-          {topProds.length > 0 ? (
-            <>
-              <ResponsiveContainer width="100%" height={160}>
-                <PieChart>
-                  <Pie
-                    data={topProds}
-                    cx="50%" cy="50%"
-                    innerRadius={42} outerRadius={70}
-                    paddingAngle={4} dataKey="value"
-                  >
-                    {topProds.map((e, i) => <Cell key={i} fill={e.fill} />)}
-                  </Pie>
-                  <Tooltip content={<PieTip />} />
-                </PieChart>
-              </ResponsiveContainer>
-              <div className="mt-3 space-y-2">
-                {topProds.slice(0, 5).map((p, i) => (
-                  <div key={i} className="flex items-center justify-between text-xs">
-                    <div className="flex items-center gap-2 min-w-0">
-                      <span className="w-2 h-2 rounded-full" style={{ backgroundColor: p.fill }} />
-                      <span className="text-gray-600 truncate">{p.name}</span>
-                    </div>
-                    <span className="font-bold text-gray-700 ml-2">
-                      Rs. {p.value?.toLocaleString()}
-                    </span>
-                  </div>
-                ))}
+        {/* ══ FILTER BAR ══ */}
+        <div className="ld-fu1" style={{ ...GLASS,borderRadius:16,padding:"14px 20px",marginBottom:24,display:"flex",alignItems:"center",flexWrap:"wrap",gap:12 }}>
+          <div style={{ display:"flex",alignItems:"center",gap:8,marginRight:4 }}>
+            <FiFilter style={{ color:"rgba(99,102,241,.8)",fontSize:13 }}/>
+            <span style={{ fontSize:11,color:"rgba(255,255,255,.35)",textTransform:"uppercase",letterSpacing:"2.5px",fontWeight:700 }}>Period</span>
+          </div>
+          <div style={{ display:"flex",gap:6,flexWrap:"wrap" }}>
+            {FILTERS.map(f=>(
+              <button key={f.key} onClick={()=>{ setFilter(f.key); setShowC(f.key==="custom"); }}
+                style={{ padding:"6px 18px",borderRadius:10,fontSize:12,fontWeight:600,cursor:"pointer",transition:"all .2s",fontFamily:"Outfit",
+                  background: filter===f.key?"linear-gradient(135deg,#6366f1,#4f46e5)":"rgba(255,255,255,.04)",
+                  border: filter===f.key?"1px solid rgba(99,102,241,.6)":"1px solid rgba(255,255,255,.07)",
+                  color: filter===f.key?"#fff":"rgba(255,255,255,.45)",
+                  boxShadow: filter===f.key?"0 4px 20px rgba(99,102,241,.28)":"none" }}>
+                {f.label}
+              </button>
+            ))}
+          </div>
+          <div style={{ marginLeft:"auto",display:"flex",alignItems:"center",gap:12 }}>
+            <span style={{ fontSize:11,color:"rgba(255,255,255,.22)",fontWeight:500 }}>{filtered.length} transactions in period</span>
+          </div>
+          {showC && (
+            <div style={{ width:"100%",display:"grid",gridTemplateColumns:"1fr 1fr auto",gap:10,paddingTop:10,borderTop:"1px solid rgba(255,255,255,.05)",marginTop:4 }}>
+              {["Start","End"].map((lb,i)=>(
+                <div key={lb}>
+                  <p style={{ fontSize:10,color:"rgba(255,255,255,.28)",marginBottom:6,textTransform:"uppercase",letterSpacing:2 }}>{lb}</p>
+                  <input type="date" className="ld-input" style={{ width:"100%" }} value={i===0?cs:ce} onChange={e=>i===0?setCs(e.target.value):setCe(e.target.value)}/>
+                </div>
+              ))}
+              <div style={{ display:"flex",alignItems:"flex-end" }}>
+                <button style={{ padding:"8px 22px",borderRadius:10,background:"linear-gradient(135deg,#6366f1,#4f46e5)",border:"none",color:"#fff",fontSize:13,fontWeight:700,cursor:"pointer",fontFamily:"Outfit",boxShadow:"0 4px 20px rgba(99,102,241,.3)" }}>Apply</button>
               </div>
-            </>
-          ) : (
-            <div className="flex flex-col items-center justify-center h-48 text-gray-300">
-              <FiPackage className="text-5xl mb-3" />
-              <p className="text-sm text-gray-400">No products in this period</p>
             </div>
           )}
         </div>
-      </div>
 
-      {/* ══════════════════════════════════════
-          TOP PRODUCTS TABLE + PAYMENT PIE
-      ══════════════════════════════════════ */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-5">
+        {/* ══ KPI ROW 1 ══ */}
+        <div className="ld-fu2" style={{ display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(210px,1fr))",gap:16,marginBottom:16 }}>
+          <KPI title="Period Revenue"  value={`Rs. ${rev.toLocaleString()}`}      sub={`${filtered.length} sales · ${flabel}`}                       icon={<FaMoneyCheckDollar/>} color="#f59e0b" />
+          <KPI title="Sales Count"     value={filtered.length}                     sub={`Avg Rs. ${(rev/(filtered.length||1)).toFixed(0)}`}              icon={<MdPointOfSale/>}      color="#6366f1" />
+          <KPI title="Tax Collected"   value={`Rs. ${tax.toLocaleString()}`}       sub={`Discount Rs. ${disc.toLocaleString()}`}                         icon={<FiDollarSign/>}       color="#06b6d4" />
+          <KPI title="Items Sold"      value={filtered.reduce((a,x)=>a+(x.items?.length||0),0)} sub={`${topProds.length} unique products`}              icon={<FiPackage/>}          color="#ec4899" />
+        </div>
 
-        {/* Top Products Table */}
-        <div className="lg:col-span-2 bg-white rounded-2xl shadow-sm overflow-hidden">
-          <div className="px-4 sm:px-6 py-4 border-b border-gray-50 flex items-center justify-between">
-            <div>
-              <h2 className="font-bold text-gray-800 text-sm sm:text-base">Top Selling Products</h2>
-              <p className="text-xs text-gray-400 mt-0.5">{filterLabel} — by revenue</p>
+        {/* ══ KPI ROW 2 ══ */}
+        <div className="ld-fu3" style={{ display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(210px,1fr))",gap:16,marginBottom:28 }}>
+          <KPI title="Today Revenue"   value={`Rs. ${todayRev.toLocaleString()}`}  sub={`${todayCnt} sales today`}                                      icon={<BsLightningChargeFill/>} color="#f59e0b" />
+          <KPI title="System Users"    value={users.length}                         sub="All roles combined"                                              icon={<FiUsers/>}            color="#10b981" />
+          <KPI title="Low Stock Alert" value={lowStock.length}                      sub={`${oos.length} fully out of stock`}                              icon={<FiAlertTriangle/>}    color="#ef4444" />
+          <KPI title="Total Products"  value={products.length}                      sub={`${products.filter(p=>p.isActive).length} active listings`}      icon={<BsGraphUpArrow/>}     color="#8b5cf6" />
+        </div>
+
+        {/* ══ CHARTS ══ */}
+        <div className="ld-fu4" style={{ display:"grid",gridTemplateColumns:"2fr 1fr",gap:20,marginBottom:20 }}>
+
+          {/* Area Chart */}
+          <div className="ld-card" style={{ ...GLASS,padding:"26px 28px" }}>
+            <div style={{ display:"flex",alignItems:"flex-start",justifyContent:"space-between",marginBottom:24 }}>
+              <div>
+                <h2 style={{ fontSize:16,fontWeight:700,color:"#fff",margin:0,letterSpacing:"-0.3px" }}>Revenue Trend</h2>
+                <p style={{ fontSize:12,color:"rgba(255,255,255,.3)",marginTop:4 }}>{flabel} · {barData.length} data points</p>
+              </div>
+              <div style={{ textAlign:"right" }}>
+                <p style={{ fontSize:11,color:"rgba(255,255,255,.28)",textTransform:"uppercase",letterSpacing:2,margin:0 }}>Total</p>
+                <p style={{ fontSize:22,fontWeight:900,color:"#f59e0b",margin:0 }}>Rs. {rev.toLocaleString()}</p>
+              </div>
             </div>
-            <span className="text-xs bg-indigo-50 text-indigo-600 font-bold px-2.5 py-1.5 rounded-full">
-              {topProds.length}
-            </span>
+            {barData.length>0?(
+              <ResponsiveContainer width="100%" height={230}>
+                <AreaChart data={barData} margin={{top:5,right:5,left:0,bottom:5}}>
+                  <defs>
+                    <linearGradient id="aGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#6366f1" stopOpacity={0.35}/>
+                      <stop offset="100%" stopColor="#6366f1" stopOpacity={0}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,.04)" vertical={false}/>
+                  <XAxis dataKey="date" tick={{fontSize:10,fill:"rgba(255,255,255,.22)",fontFamily:"Outfit"}} axisLine={false} tickLine={false} interval="preserveStartEnd"/>
+                  <YAxis tick={{fontSize:10,fill:"rgba(255,255,255,.22)"}} axisLine={false} tickLine={false} tickFormatter={v=>v>=1000?`${(v/1000).toFixed(0)}k`:v} width={34}/>
+                  <Tooltip content={<Tip/>} cursor={{stroke:"rgba(255,255,255,.05)",strokeWidth:1}}/>
+                  <Area type="monotone" dataKey="Revenue" stroke="#6366f1" strokeWidth={2.5} fill="url(#aGrad)" dot={{fill:"#6366f1",r:3,strokeWidth:0}} activeDot={{r:5,fill:"#f59e0b",strokeWidth:0}}/>
+                </AreaChart>
+              </ResponsiveContainer>
+            ):(
+              <div style={{height:230,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",color:"rgba(255,255,255,.15)"}}>
+                <MdPointOfSale style={{fontSize:38,marginBottom:8}}/><p style={{fontSize:13}}>No data this period</p>
+              </div>
+            )}
           </div>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+
+          {/* Payment Pie */}
+          <div className="ld-card" style={{...GLASS,padding:"26px 24px"}}>
+            <h2 style={{fontSize:16,fontWeight:700,color:"#fff",margin:"0 0 4px",letterSpacing:"-0.3px"}}>Payment Split</h2>
+            <p style={{fontSize:12,color:"rgba(255,255,255,.3)",marginBottom:20}}>{flabel}</p>
+            {payPie.length>0?(
+              <>
+                <ResponsiveContainer width="100%" height={160}>
+                  <PieChart>
+                    <Pie data={payPie} cx="50%" cy="50%" innerRadius={48} outerRadius={72} paddingAngle={4} dataKey="value">
+                      {payPie.map((x,i)=><Cell key={i} fill={x.fill}/>)}
+                    </Pie>
+                    <Tooltip content={<Tip/>}/>
+                  </PieChart>
+                </ResponsiveContainer>
+                <div style={{marginTop:14,display:"flex",flexDirection:"column",gap:9}}>
+                  {payPie.map((p,i)=>(
+                    <div key={i} style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+                      <div style={{display:"flex",alignItems:"center",gap:8}}>
+                        <span style={{width:8,height:8,borderRadius:"50%",background:p.fill,display:"inline-block"}}/>
+                        <span style={{fontSize:12,color:"rgba(255,255,255,.45)",textTransform:"capitalize"}}>{p.name}</span>
+                      </div>
+                      <span style={{fontSize:12,fontWeight:800,color:"#fff"}}>Rs. {p.value?.toLocaleString()}</span>
+                    </div>
+                  ))}
+                </div>
+              </>
+            ):(
+              <div style={{height:200,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",color:"rgba(255,255,255,.15)"}}>
+                <MdPayments style={{fontSize:36,marginBottom:8}}/><p style={{fontSize:13}}>No payments</p>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* ══ TOP PRODUCTS + LINE ══ */}
+        <div className="ld-fu5" style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:20,marginBottom:20}}>
+
+          {/* Top Products */}
+          <div className="ld-card" style={{...GLASS,overflow:"hidden"}}>
+            <SHead title="Top Products" sub={`By revenue · ${flabel}`}
+              right={<Chip color="#f59e0b"><FaFire/>{topProds.length} items</Chip>}/>
+            <div style={{overflowX:"auto"}}>
+              <table style={{width:"100%",borderCollapse:"collapse"}}>
+                <thead>
+                  <tr><th style={TH}>#</th><th style={TH}>Product</th><th style={TH}>Qty</th><th style={TH}>Revenue</th></tr>
+                </thead>
+                <tbody>
+                  {topProds.length>0?topProds.map((p,i)=>(
+                    <tr key={i} className="ld-row">
+                      <td style={TD}><span style={{width:26,height:26,borderRadius:8,background:`${p.fill}18`,border:`1px solid ${p.fill}35`,display:"inline-flex",alignItems:"center",justifyContent:"center",fontSize:11,fontWeight:900,color:p.fill}}>{i+1}</span></td>
+                      <td style={{...TD,fontWeight:600,color:"rgba(255,255,255,.82)"}}>{p.name}</td>
+                      <td style={TD}><span style={{padding:"2px 10px",borderRadius:20,background:`${p.fill}18`,color:p.fill,fontSize:11,fontWeight:800,border:`1px solid ${p.fill}30`}}>{p.q}</span></td>
+                      <td style={{...TD,fontWeight:800,color:"#f59e0b"}}>Rs. {p.v?.toLocaleString()}</td>
+                    </tr>
+                  )):(
+                    <tr><td colSpan="4" style={{...TD,textAlign:"center",padding:"40px",color:"rgba(255,255,255,.2)"}}>No product data</td></tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Line Chart */}
+          <div className="ld-card" style={{...GLASS,padding:"26px 24px"}}>
+            <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",marginBottom:20}}>
+              <div>
+                <h2 style={{fontSize:16,fontWeight:700,color:"#fff",margin:0,letterSpacing:"-0.3px"}}>Growth Line</h2>
+                <p style={{fontSize:12,color:"rgba(255,255,255,.3)",marginTop:3}}>Revenue over time</p>
+              </div>
+              <Chip color="#10b981"><FiTrendingUp/> Trend</Chip>
+            </div>
+            {barData.length>1?(
+              <ResponsiveContainer width="100%" height={210}>
+                <LineChart data={barData} margin={{top:5,right:10,left:0,bottom:5}}>
+                  <defs>
+                    <linearGradient id="lGrad" x1="0" y1="0" x2="1" y2="0">
+                      <stop offset="0%" stopColor="#10b981" stopOpacity={0.4}/>
+                      <stop offset="50%" stopColor="#10b981" stopOpacity={1}/>
+                      <stop offset="100%" stopColor="#10b981" stopOpacity={0.4}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,.04)" vertical={false}/>
+                  <XAxis dataKey="date" tick={{fontSize:10,fill:"rgba(255,255,255,.2)",fontFamily:"Outfit"}} axisLine={false} tickLine={false} interval="preserveStartEnd"/>
+                  <YAxis tick={{fontSize:10,fill:"rgba(255,255,255,.2)"}} axisLine={false} tickLine={false} tickFormatter={v=>v>=1000?`${(v/1000).toFixed(0)}k`:v} width={34}/>
+                  <Tooltip content={<Tip/>}/>
+                  <Line type="monotone" dataKey="Revenue" stroke="url(#lGrad)" strokeWidth={2.5} dot={{fill:"#10b981",r:3,strokeWidth:2,stroke:"rgba(0,0,0,.5)"}} activeDot={{r:6,fill:"#f59e0b",strokeWidth:0}}/>
+                </LineChart>
+              </ResponsiveContainer>
+            ):(
+              <div style={{height:210,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",color:"rgba(255,255,255,.15)"}}>
+                <FiTrendingUp style={{fontSize:36,marginBottom:8}}/><p style={{fontSize:13}}>Need more data</p>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* ══ RECENT SALES ══ */}
+        <div className="ld-fu6 ld-card" style={{...GLASS,overflow:"hidden",marginBottom:20}}>
+          <SHead title="Recent Transactions" sub={`Latest ${recent.length} · ${flabel}`}
+            right={<Chip color="#6366f1"><HiSparkles/>{recent.length}</Chip>}/>
+
+          {/* Mobile */}
+          <div className="ld-show-mob">
+            {recent.length>0?recent.map(s=>(
+              <div key={s._id} style={{padding:"14px 20px",borderBottom:"1px solid rgba(255,255,255,.04)",display:"flex",justifyContent:"space-between",alignItems:"center",gap:12}}>
+                <div>
+                  <p style={{fontSize:12,fontWeight:700,color:"#6366f1",margin:0}}>{s.invoiceNumber}</p>
+                  <p style={{fontSize:14,fontWeight:600,color:"rgba(255,255,255,.78)",margin:"3px 0 2px"}}>{s.customer}</p>
+                  <p style={{fontSize:11,color:"rgba(255,255,255,.28)",margin:0,textTransform:"capitalize"}}>{s.paymentMethod}</p>
+                </div>
+                <div style={{textAlign:"right"}}>
+                  <p style={{fontSize:16,fontWeight:900,color:"#f59e0b",margin:"0 0 4px"}}> Rs. {s.total?.toLocaleString()}</p>
+                  <Badge status={s.status}/>
+                </div>
+              </div>
+            )):(
+              <div style={{padding:"48px 20px",textAlign:"center",color:"rgba(255,255,255,.18)"}}>
+                <FiShoppingCart style={{fontSize:32,display:"block",margin:"0 auto 8px"}}/><p style={{fontSize:13}}>No sales this period</p>
+              </div>
+            )}
+          </div>
+
+          {/* Desktop */}
+          <div className="ld-hide-mob" style={{overflowX:"auto"}}>
+            <table style={{width:"100%",borderCollapse:"collapse"}}>
               <thead>
-                <tr className="bg-gray-50 text-gray-400 text-xs uppercase tracking-wider text-left">
-                  <th className="px-4 sm:px-6 py-3">#</th>
-                  <th className="px-4 sm:px-6 py-3">Product</th>
-                  <th className="px-4 sm:px-6 py-3">Qty</th>
-                  <th className="px-4 sm:px-6 py-3">Total</th>
-                </tr>
+                <tr><th style={TH}>Invoice</th><th style={TH}>Customer</th><th style={TH}>Cashier</th><th style={TH}>Status</th><th style={TH}>Total</th><th style={TH}>Payment</th><th style={TH}>Date</th></tr>
               </thead>
-              <tbody className="divide-y divide-gray-50">
-                {topProds.length > 0 ? topProds.map((p, i) => (
-                  <tr key={i} className="hover:bg-gray-50 transition">
-                    <td className="px-4 sm:px-6 py-3">
-                      <span
-                        className="w-6 h-6 rounded-full text-xs font-bold flex items-center justify-center text-white"
-                        style={{ backgroundColor: p.fill }}
-                      >
-                        {i + 1}
-                      </span>
-                    </td>
-                    <td className="px-4 sm:px-6 py-3 font-semibold text-gray-700 text-xs sm:text-sm">
-                      {p.name}
-                    </td>
-                    <td className="px-4 sm:px-6 py-3">
-                      <span
-                        className="px-2 py-1 rounded-full text-xs font-bold"
-                        style={{ backgroundColor: p.fill + "22", color: p.fill }}
-                      >
-                        {p.qty}
-                      </span>
-                    </td>
-                    <td className="px-4 sm:px-6 py-3 font-bold text-gray-800 text-xs sm:text-sm">
-                      Rs. {p.value?.toLocaleString()}
-                    </td>
+              <tbody>
+                {recent.length>0?recent.map(s=>(
+                  <tr key={s._id} className="ld-row">
+                    <td style={{...TD,fontWeight:700,color:"#6366f1",fontSize:12}}>{s.invoiceNumber}</td>
+                    <td style={{...TD,fontWeight:600,color:"rgba(255,255,255,.78)"}}>{s.customer}</td>
+                    <td style={{...TD,color:"rgba(255,255,255,.35)",fontSize:12}}>{s.cashier?.name||"—"}</td>
+                    <td style={TD}><Badge status={s.status}/></td>
+                    <td style={{...TD,fontWeight:900,color:"#f59e0b",fontSize:14}}>Rs. {s.total?.toLocaleString()}</td>
+                    <td style={{...TD,color:"rgba(255,255,255,.38)",textTransform:"capitalize",fontSize:12}}>{s.paymentMethod}</td>
+                    <td style={{...TD,color:"rgba(255,255,255,.22)",fontSize:11}}>{new Date(s.createdAt).toLocaleDateString()}</td>
                   </tr>
-                )) : (
-                  <tr>
-                    <td colSpan="4" className="text-center py-10 text-gray-300">
-                      <FiShoppingCart className="text-3xl mx-auto mb-2" />
-                      <p className="text-sm text-gray-400">No sales in this period</p>
-                    </td>
-                  </tr>
+                )):(
+                  <tr><td colSpan="7" style={{...TD,textAlign:"center",padding:"48px",color:"rgba(255,255,255,.2)"}}>
+                    <FiShoppingCart style={{fontSize:32,display:"block",margin:"0 auto 8px"}}/> No sales this period
+                  </td></tr>
                 )}
               </tbody>
             </table>
           </div>
         </div>
 
-        {/* Payment Pie */}
-        <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-6">
-          <h2 className="font-bold text-gray-800 mb-1 text-sm sm:text-base">Payment Methods</h2>
-          <p className="text-xs text-gray-400 mb-4">{filterLabel} — by type</p>
-          {payPie.length > 0 ? (
-            <>
-              <ResponsiveContainer width="100%" height={160}>
-                <PieChart>
-                  <Pie
-                    data={payPie}
-                    cx="50%" cy="50%"
-                    outerRadius={70}
-                    paddingAngle={4} dataKey="value"
-                  >
-                    {payPie.map((e, i) => <Cell key={i} fill={e.fill} />)}
-                  </Pie>
-                  <Tooltip content={<PieTip />} />
-                </PieChart>
-              </ResponsiveContainer>
-              <div className="mt-3 space-y-2">
-                {payPie.map((p, i) => (
-                  <div key={i} className="flex items-center justify-between text-xs">
-                    <div className="flex items-center gap-2">
-                      <span className="w-2 h-2 rounded-full" style={{ backgroundColor: p.fill }} />
-                      <span className="text-gray-600 capitalize">{p.name}</span>
-                    </div>
-                    <span className="font-bold text-gray-700">Rs. {p.value?.toLocaleString()}</span>
-                  </div>
-                ))}
-              </div>
-            </>
-          ) : (
-            <div className="flex flex-col items-center justify-center h-48 text-gray-300">
-              <MdPayments className="text-5xl mb-3" />
-              <p className="text-sm text-gray-400">No payments in this period</p>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* ══════════════════════════════════════
-          LINE CHART (trend)
-      ══════════════════════════════════════ */}
-      {barData.length > 1 && (
-        <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-6">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h2 className="font-bold text-gray-800 text-sm sm:text-base">Revenue Trend</h2>
-              <p className="text-xs text-gray-400 mt-0.5">Growth — {filterLabel}</p>
-            </div>
-            <span className="flex items-center gap-1.5 text-xs bg-emerald-50 text-emerald-600 font-semibold px-2.5 py-1.5 rounded-full">
-              <FiTrendingUp /> Trend
-            </span>
+        {/* ══ STOCK ALERTS ══ */}
+        <div className="ld-fu7 ld-card" style={{...GLASS,overflow:"hidden"}}>
+          <SHead title="Stock Alerts" sub="Below minimum threshold"
+            right={lowStock.length>0
+              ?<Chip color="#ef4444"><FiAlertTriangle/> {lowStock.length} items</Chip>
+              :<Chip color="#10b981"><BsCheckCircleFill/> All Good</Chip>}/>
+          <div style={{overflowX:"auto"}}>
+            <table style={{width:"100%",borderCollapse:"collapse"}}>
+              <thead>
+                <tr><th style={TH}>SKU</th><th style={TH}>Product</th><th style={TH}>Category</th><th style={TH}>Stock</th><th style={TH}>Min</th><th style={TH}>Status</th></tr>
+              </thead>
+              <tbody>
+                {lowStock.length>0?lowStock.map(p=>(
+                  <tr key={p._id} className="ld-row">
+                    <td style={{...TD,fontFamily:"monospace",fontSize:11,color:"rgba(255,255,255,.25)"}}>{p.sku}</td>
+                    <td style={{...TD,fontWeight:600,color:"rgba(255,255,255,.8)"}}>{p.name}</td>
+                    <td style={{...TD,color:"rgba(255,255,255,.38)",fontSize:12}}>{p.category?.name||"—"}</td>
+                    <td style={TD}>
+                      <span style={{padding:"4px 12px",borderRadius:20,background:p.stock===0?"rgba(239,68,68,.15)":"rgba(245,158,11,.15)",color:p.stock===0?"#ef4444":"#f59e0b",border:`1px solid ${p.stock===0?"rgba(239,68,68,.3)":"rgba(245,158,11,.3)"}`,fontSize:12,fontWeight:800}}>
+                        {p.stock} {p.unit}
+                      </span>
+                    </td>
+                    <td style={TD}><span style={{padding:"4px 12px",borderRadius:20,background:"rgba(255,255,255,.05)",color:"rgba(255,255,255,.35)",border:"1px solid rgba(255,255,255,.08)",fontSize:12}}>{p.minStock} {p.unit}</span></td>
+                    <td style={TD}>
+                      <span style={{padding:"4px 12px",borderRadius:20,background:p.stock===0?"rgba(239,68,68,.15)":"rgba(245,158,11,.15)",color:p.stock===0?"#ef4444":"#f59e0b",border:`1px solid ${p.stock===0?"rgba(239,68,68,.3)":"rgba(245,158,11,.3)"}`,fontSize:11,fontWeight:700}}>
+                        {p.stock===0?"Out of Stock":"Low Stock"}
+                      </span>
+                    </td>
+                  </tr>
+                )):(
+                  <tr><td colSpan="6" style={{...TD,textAlign:"center",padding:"48px",color:"rgba(255,255,255,.2)"}}>
+                    <RiStockLine style={{fontSize:32,display:"block",margin:"0 auto 8px"}}/> All stock levels healthy
+                  </td></tr>
+                )}
+              </tbody>
+            </table>
           </div>
-          <ResponsiveContainer width="100%" height={160}>
-            <LineChart data={barData} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" vertical={false} />
-              <XAxis
-                dataKey="date"
-                tick={{ fontSize: 10, fill: "#9ca3af" }}
-                axisLine={false} tickLine={false}
-                interval="preserveStartEnd"
-              />
-              <YAxis
-                tick={{ fontSize: 10, fill: "#9ca3af" }}
-                axisLine={false} tickLine={false}
-                tickFormatter={(v) => v >= 1000 ? `${(v / 1000).toFixed(0)}k` : v}
-                width={35}
-              />
-              <Tooltip content={<BarTip />} />
-              <Line
-                type="monotone" dataKey="Revenue"
-                stroke="#22c55e" strokeWidth={2.5}
-                dot={{ fill: "#22c55e", r: 3 }}
-                activeDot={{ r: 5 }}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-      )}
-
-      {/* ══════════════════════════════════════
-          RECENT SALES TABLE (mobile cards + desktop table)
-      ══════════════════════════════════════ */}
-      <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
-        <div className="px-4 sm:px-6 py-4 border-b border-gray-50 flex items-center justify-between">
-          <div>
-            <h2 className="font-bold text-gray-800 text-sm sm:text-base">Recent Sales</h2>
-            <p className="text-xs text-gray-400 mt-0.5">Latest 5 — {filterLabel}</p>
-          </div>
-          <span className="text-xs text-indigo-600 font-bold bg-indigo-50 px-2.5 py-1.5 rounded-full">
-            {recentSales.length}
-          </span>
         </div>
 
-        {/* Mobile Cards */}
-        <div className="sm:hidden divide-y divide-gray-50">
-          {recentSales.length > 0 ? recentSales.map((sale) => (
-            <div key={sale._id} className="p-4 space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="font-bold text-indigo-600 text-xs">{sale.invoiceNumber}</span>
-                <span className={`px-2 py-0.5 rounded-full text-xs font-semibold capitalize ${statusBg(sale.status)}`}>
-                  {sale.status}
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-gray-700 text-sm font-medium">{sale.customer}</span>
-                <span className="font-bold text-gray-800">Rs. {sale.total?.toLocaleString()}</span>
-              </div>
-              <div className="flex items-center justify-between text-xs text-gray-400">
-                <span>{sale.cashier?.name || "—"}</span>
-                <span className="flex items-center gap-1 text-emerald-600 font-semibold">
-                  <BsCheckCircleFill /> Paid · {sale.paymentMethod}
-                </span>
-              </div>
-            </div>
-          )) : (
-            <div className="text-center py-10 text-gray-300">
-              <FiShoppingCart className="text-4xl mx-auto mb-2" />
-              <p className="text-sm text-gray-400">No sales in this period</p>
-            </div>
-          )}
-        </div>
-
-        {/* Desktop Table */}
-        <div className="hidden sm:block overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="bg-gray-50 text-gray-400 text-xs uppercase tracking-wider text-left">
-                <th className="px-6 py-3">Reference</th>
-                <th className="px-6 py-3">Customer</th>
-                <th className="px-6 py-3">Cashier</th>
-                <th className="px-6 py-3">Status</th>
-                <th className="px-6 py-3">Total</th>
-                <th className="px-6 py-3">Payment</th>
-                <th className="px-6 py-3">Paid</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-50">
-              {recentSales.length > 0 ? recentSales.map((sale) => (
-                <tr key={sale._id} className="hover:bg-gray-50 transition">
-                  <td className="px-6 py-3.5 font-bold text-indigo-600 text-xs">{sale.invoiceNumber}</td>
-                  <td className="px-6 py-3.5 text-gray-700">{sale.customer}</td>
-                  <td className="px-6 py-3.5 text-gray-500 text-xs">{sale.cashier?.name || "—"}</td>
-                  <td className="px-6 py-3.5">
-                    <span className={`px-2.5 py-1 rounded-full text-xs font-semibold capitalize ${statusBg(sale.status)}`}>
-                      {sale.status}
-                    </span>
-                  </td>
-                  <td className="px-6 py-3.5 font-bold text-gray-800">Rs. {sale.total?.toLocaleString()}</td>
-                  <td className="px-6 py-3.5 text-gray-500 capitalize text-xs">{sale.paymentMethod}</td>
-                  <td className="px-6 py-3.5">
-                    <span className="flex items-center gap-1.5 text-emerald-600 text-xs font-semibold">
-                      <BsCheckCircleFill /> Paid
-                    </span>
-                  </td>
-                </tr>
-              )) : (
-                <tr>
-                  <td colSpan="7" className="text-center py-10 text-gray-300">
-                    <FiShoppingCart className="text-4xl mx-auto mb-2" />
-                    <p className="text-sm text-gray-400">No sales in this period</p>
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
       </div>
-
-      {/* ══════════════════════════════════════
-          STOCK ALERT TABLE (mobile cards + desktop table)
-      ══════════════════════════════════════ */}
-      <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
-        <div className="px-4 sm:px-6 py-4 border-b border-gray-50 flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-orange-100 flex items-center justify-center">
-              <FiAlertTriangle className="text-orange-500 text-sm" />
-            </div>
-            <div>
-              <h2 className="font-bold text-gray-800 text-sm sm:text-base">Stock Alert</h2>
-              <p className="text-xs text-gray-400 mt-0.5">Below minimum stock</p>
-            </div>
-          </div>
-          {lowStockProducts.length > 0 ? (
-            <span className="text-xs bg-red-100 text-red-600 font-bold px-2.5 py-1.5 rounded-full">
-              ⚠️ {lowStockProducts.length}
-            </span>
-          ) : (
-            <span className="text-xs bg-emerald-100 text-emerald-600 font-bold px-2.5 py-1.5 rounded-full">
-              ✅ Good
-            </span>
-          )}
-        </div>
-
-        {/* Mobile Cards */}
-        <div className="sm:hidden divide-y divide-gray-50">
-          {lowStockProducts.length > 0 ? lowStockProducts.map((p) => (
-            <div key={p._id} className="p-4 flex items-center justify-between gap-3">
-              <div className="min-w-0">
-                <p className="font-semibold text-gray-800 text-sm truncate">{p.name}</p>
-                <p className="text-xs text-gray-400 mt-0.5">{p.category?.name} · {p.sku}</p>
-              </div>
-              <div className="flex flex-col items-end gap-1">
-                <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${p.stock === 0 ? "bg-red-100 text-red-700" : "bg-orange-100 text-orange-700"}`}>
-                  {p.stock} {p.unit}
-                </span>
-                <span className="text-xs text-gray-400">Min: {p.minStock}</span>
-              </div>
-            </div>
-          )) : (
-            <div className="text-center py-10 text-gray-300">
-              <RiStockLine className="text-4xl mx-auto mb-2" />
-              <p className="text-sm text-gray-400">All stock levels are good ✅</p>
-            </div>
-          )}
-        </div>
-
-        {/* Desktop Table */}
-        <div className="hidden sm:block overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="bg-gray-50 text-gray-400 text-xs uppercase tracking-wider text-left">
-                <th className="px-6 py-3">SKU</th>
-                <th className="px-6 py-3">Product</th>
-                <th className="px-6 py-3">Category</th>
-                <th className="px-6 py-3">Stock</th>
-                <th className="px-6 py-3">Min Stock</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-50">
-              {lowStockProducts.length > 0 ? lowStockProducts.map((p) => (
-                <tr key={p._id} className="hover:bg-orange-50 transition">
-                  <td className="px-6 py-3.5 font-mono text-xs text-gray-400">{p.sku}</td>
-                  <td className="px-6 py-3.5 font-semibold text-gray-700">{p.name}</td>
-                  <td className="px-6 py-3.5 text-gray-500">{p.category?.name || "—"}</td>
-                  <td className="px-6 py-3.5">
-                    <span className={`px-2.5 py-1 rounded-full text-xs font-bold ${p.stock === 0 ? "bg-red-100 text-red-700" : "bg-orange-100 text-orange-700"}`}>
-                      {p.stock} {p.unit}
-                    </span>
-                  </td>
-                  <td className="px-6 py-3.5">
-                    <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-500">
-                      {p.minStock} {p.unit}
-                    </span>
-                  </td>
-                </tr>
-              )) : (
-                <tr>
-                  <td colSpan="5" className="text-center py-10 text-gray-300">
-                    <RiStockLine className="text-4xl mx-auto mb-2" />
-                    <p className="text-sm text-gray-400">All products sufficient ✅</p>
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
     </div>
   );
 };

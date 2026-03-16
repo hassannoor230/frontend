@@ -44,16 +44,16 @@ const Reports = () => {
     <div className="space-y-6">
 
       {/* Header */}
-      <div className="bg-white rounded-2xl p-5 sm:p-6 shadow-sm">
-        <h1 className="text-2xl font-bold text-gray-800">Reports</h1>
+      <div className="bg-gray-800 rounded-2xl p-5 sm:p-6 shadow-md shadow-black/20">
+        <h1 className="text-2xl font-bold text-white">Reports</h1>
         <p className="text-sm text-gray-400 mt-1">
           View detailed business reports
         </p>
       </div>
 
       {/* Date Filter */}
-      <div className="bg-white rounded-2xl p-4 shadow-sm">
-        <p className="text-sm font-medium text-gray-700 mb-3">
+      <div className="bg-gray-800 rounded-2xl p-4 shadow-md shadow-black/20">
+        <p className="text-sm font-medium text-gray-300 mb-3">
           Filter by Date Range
         </p>
         <div className="flex flex-col sm:flex-row gap-3">
@@ -63,7 +63,7 @@ const Reports = () => {
               type="date"
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
-              className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              className="w-full border border-gray-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
             />
           </div>
           <div className="flex-1">
@@ -72,13 +72,13 @@ const Reports = () => {
               type="date"
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
-              className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              className="w-full border border-gray-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
             />
           </div>
           <div className="flex items-end gap-2">
             <button
               onClick={fetchReports}
-              className="px-5 py-2.5 bg-gray-800 hover:bg-indigo-700 text-white rounded-xl text-sm font-semibold transition"
+              className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 shadow-md shadow-indigo-500/20 text-white rounded-xl text-sm font-semibold transition"
             >
               Apply
             </button>
@@ -88,7 +88,7 @@ const Reports = () => {
                 setEndDate("");
                 setTimeout(fetchReports, 100);
               }}
-              className="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-xl text-sm font-semibold transition"
+              className="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-400 rounded-xl text-sm font-semibold transition"
             >
               Reset
             </button>
@@ -103,8 +103,8 @@ const Reports = () => {
             key={tab.key}
             onClick={() => setActiveTab(tab.key)}
             className={`px-5 py-2.5 rounded-xl text-sm font-semibold transition ${activeTab === tab.key
-                ? "bg-gray-800 text-white shadow-sm"
-                : "bg-white text-gray-600 hover:bg-gray-50"
+                ? "bg-gray-800 text-white shadow-md shadow-black/20"
+                : "bg-gray-800 text-gray-400 hover:bg-gray-700/50"
               }`}
           >
             {tab.label}
@@ -115,7 +115,7 @@ const Reports = () => {
       {loading ? (
         <div className="flex items-center justify-center h-64">
           <div className=" flex justify-center items-center flex-col text-center py-16 text-gray-400">
-            <FiLoader className="text-4xl mb-2 mx-auto animate-spin text-gray-500" />
+            <FiLoader className="text-4xl mb-2 mx-auto animate-spin text-gray-400" />
             Loading...
           </div>
         </div>
@@ -127,25 +127,25 @@ const Reports = () => {
 
               {/* Stats */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
-                <div className="bg-white rounded-2xl p-4 shadow-sm text-center">
+                <div className="bg-gray-800 rounded-2xl p-4 shadow-md shadow-black/20 text-center">
                   <p className="text-xs text-gray-400 mb-1">Total Sales</p>
-                  <p className="text-2xl font-bold text-gray-800">
+                  <p className="text-2xl font-bold text-white">
                     {salesReport.totalSales}
                   </p>
                 </div>
-                <div className="bg-emerald-50 rounded-2xl p-4 shadow-sm text-center">
-                  <p className="text-xs text-emerald-500 mb-1">Revenue</p>
+                <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-2xl p-4 shadow-md shadow-black/20 text-center">
+                  <p className="text-xs text-emerald-400 mb-1">Revenue</p>
                   <p className="text-xl font-bold text-emerald-700">
                     Rs. {salesReport.totalRevenue?.toLocaleString()}
                   </p>
                 </div>
-                <div className="bg-blue-50 rounded-2xl p-4 shadow-sm text-center">
+                <div className="bg-blue-500/10 border border-blue-500/20 rounded-2xl p-4 shadow-md shadow-black/20 text-center">
                   <p className="text-xs text-blue-400 mb-1">Tax Collected</p>
                   <p className="text-xl font-bold text-blue-700">
                     Rs. {salesReport.totalTax?.toLocaleString()}
                   </p>
                 </div>
-                <div className="bg-orange-50 rounded-2xl p-4 shadow-sm text-center">
+                <div className="bg-orange-500/10 border border-orange-500/20 rounded-2xl p-4 shadow-md shadow-black/20 text-center">
                   <p className="text-xs text-orange-400 mb-1">Discounts</p>
                   <p className="text-xl font-bold text-orange-600">
                     Rs. {salesReport.totalDiscount?.toLocaleString()}
@@ -154,8 +154,8 @@ const Reports = () => {
               </div>
 
               {/* Payment Method Breakdown */}
-              <div className="bg-white rounded-2xl shadow-sm p-5">
-                <h3 className="font-bold text-gray-800 mb-4">
+              <div className="bg-gray-800 rounded-2xl shadow-md shadow-black/20 p-5">
+                <h3 className="font-bold text-white mb-4">
                   Sales by Payment Method
                 </h3>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -171,7 +171,7 @@ const Reports = () => {
                           {method === "online" && "📱"}
                           {method === "other" && "🔄"} {method}
                         </p>
-                        <p className="font-bold text-gray-800 text-sm">
+                        <p className="font-bold text-white text-sm">
                           Rs. {amount?.toLocaleString()}
                         </p>
                       </div>
@@ -182,23 +182,23 @@ const Reports = () => {
 
               {/* Daily Sales */}
               {salesReport.dailySales?.length > 0 && (
-                <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
-                  <div className="px-5 py-4 border-b border-gray-100">
-                    <h3 className="font-bold text-gray-800">Daily Sales</h3>
+                <div className="bg-gray-800 rounded-2xl shadow-md shadow-black/20 overflow-hidden">
+                  <div className="px-5 py-4 border-b border-gray-700">
+                    <h3 className="font-bold text-white">Daily Sales</h3>
                   </div>
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm">
                       <thead>
-                        <tr className="bg-gray-50 text-gray-500 text-xs uppercase tracking-wider text-left">
+                        <tr className="bg-gray-900 text-gray-500 text-xs uppercase tracking-wider text-left">
                           <th className="px-5 py-3">Date</th>
                           <th className="px-5 py-3">Sales Count</th>
                           <th className="px-5 py-3">Revenue</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-gray-50">
+                      <tbody className="divide-y divide-gray-700">
                         {salesReport.dailySales.map((day) => (
-                          <tr key={day.date} className="hover:bg-gray-50 transition">
-                            <td className="px-5 py-3 font-medium text-gray-800">
+                          <tr key={day.date} className="hover:bg-gray-700/50 transition">
+                            <td className="px-5 py-3 font-medium text-white">
                               {new Date(day.date).toLocaleDateString("en-PK", {
                                 weekday: "short",
                                 year: "numeric",
@@ -206,7 +206,7 @@ const Reports = () => {
                                 day: "numeric",
                               })}
                             </td>
-                            <td className="px-5 py-3 text-gray-600">
+                            <td className="px-5 py-3 text-gray-400">
                               {day.count} sales
                             </td>
                             <td className="px-5 py-3 font-bold text-emerald-600">
@@ -221,14 +221,14 @@ const Reports = () => {
               )}
 
               {/* Sales List */}
-              <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
-                <div className="px-5 py-4 border-b border-gray-100">
-                  <h3 className="font-bold text-gray-800">All Sales</h3>
+              <div className="bg-gray-800 rounded-2xl shadow-md shadow-black/20 overflow-hidden">
+                <div className="px-5 py-4 border-b border-gray-700">
+                  <h3 className="font-bold text-white">All Sales</h3>
                 </div>
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="bg-gray-50 text-gray-500 text-xs uppercase tracking-wider text-left">
+                      <tr className="bg-gray-900 text-gray-500 text-xs uppercase tracking-wider text-left">
                         <th className="px-5 py-3">Invoice</th>
                         <th className="px-5 py-3">Customer</th>
                         <th className="px-5 py-3">Cashier</th>
@@ -237,23 +237,23 @@ const Reports = () => {
                         <th className="px-5 py-3">Date</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-gray-50">
+                    <tbody className="divide-y divide-gray-700">
                       {salesReport.sales?.length > 0 ? (
                         salesReport.sales.map((sale) => (
-                          <tr key={sale._id} className="hover:bg-gray-50 transition">
+                          <tr key={sale._id} className="hover:bg-gray-700/50 transition">
                             <td className="px-5 py-3 font-bold text-indigo-600">
                               {sale.invoiceNumber}
                             </td>
-                            <td className="px-5 py-3 text-gray-700">
+                            <td className="px-5 py-3 text-gray-300">
                               {sale.customer}
                             </td>
-                            <td className="px-5 py-3 text-gray-500">
+                            <td className="px-5 py-3 text-gray-400">
                               {sale.cashier?.name}
                             </td>
-                            <td className="px-5 py-3 font-bold text-gray-800">
+                            <td className="px-5 py-3 font-bold text-white">
                               Rs. {sale.total?.toLocaleString()}
                             </td>
-                            <td className="px-5 py-3 capitalize text-gray-500">
+                            <td className="px-5 py-3 capitalize text-gray-400">
                               {sale.paymentMethod}
                             </td>
                             <td className="px-5 py-3 text-gray-400 text-xs">
@@ -281,25 +281,25 @@ const Reports = () => {
 
               {/* Stats */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
-                <div className="bg-white rounded-2xl p-4 shadow-sm text-center">
+                <div className="bg-gray-800 rounded-2xl p-4 shadow-md shadow-black/20 text-center">
                   <p className="text-xs text-gray-400 mb-1">Total Products</p>
-                  <p className="text-2xl font-bold text-gray-800">
+                  <p className="text-2xl font-bold text-white">
                     {inventoryReport.totalProducts}
                   </p>
                 </div>
-                <div className="bg-indigo-50 rounded-2xl p-4 shadow-sm text-center">
+                <div className="bg-indigo-500/10 border border-indigo-500/20 rounded-2xl p-4 shadow-md shadow-black/20 text-center">
                   <p className="text-xs text-indigo-400 mb-1">Stock Value</p>
                   <p className="text-lg font-bold text-indigo-700">
                     Rs. {inventoryReport.totalStockValue?.toLocaleString()}
                   </p>
                 </div>
-                <div className="bg-orange-50 rounded-2xl p-4 shadow-sm text-center">
+                <div className="bg-orange-500/10 border border-orange-500/20 rounded-2xl p-4 shadow-md shadow-black/20 text-center">
                   <p className="text-xs text-orange-400 mb-1">Low Stock</p>
                   <p className="text-2xl font-bold text-orange-600">
                     {inventoryReport.lowStockCount}
                   </p>
                 </div>
-                <div className="bg-red-50 rounded-2xl p-4 shadow-sm text-center">
+                <div className="bg-red-500/10 border border-red-500/20 rounded-2xl p-4 shadow-md shadow-black/20 text-center">
                   <p className="text-xs text-red-400 mb-1">Out of Stock</p>
                   <p className="text-2xl font-bold text-red-600">
                     {inventoryReport.outOfStockCount}
@@ -309,8 +309,8 @@ const Reports = () => {
 
               {/* Low Stock Products */}
               {inventoryReport.lowStockProducts?.length > 0 && (
-                <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
-                  <div className="px-5 py-4 border-b border-orange-100">
+                <div className="bg-gray-800 rounded-2xl shadow-md shadow-black/20 overflow-hidden">
+                  <div className="px-5 py-4 border-b border-orange-500/20">
                     <h3 className="font-bold text-orange-600">
                       ⚠️ Low Stock Products
                     </h3>
@@ -318,7 +318,7 @@ const Reports = () => {
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm">
                       <thead>
-                        <tr className="bg-orange-50 text-gray-500 text-xs uppercase tracking-wider text-left">
+                        <tr className="bg-orange-500/10 text-gray-500 text-xs uppercase tracking-wider text-left">
                           <th className="px-5 py-3">Product</th>
                           <th className="px-5 py-3">SKU</th>
                           <th className="px-5 py-3">Category</th>
@@ -326,24 +326,24 @@ const Reports = () => {
                           <th className="px-5 py-3">Min Stock</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-gray-50">
+                      <tbody className="divide-y divide-gray-700">
                         {inventoryReport.lowStockProducts.map((p) => (
-                          <tr key={p._id} className="hover:bg-orange-50 transition">
-                            <td className="px-5 py-3 font-semibold text-gray-800">
+                          <tr key={p._id} className="hover:bg-orange-500/5 transition">
+                            <td className="px-5 py-3 font-semibold text-white">
                               {p.name}
                             </td>
                             <td className="px-5 py-3 font-mono text-xs text-gray-400">
                               {p.sku}
                             </td>
-                            <td className="px-5 py-3 text-gray-600">
+                            <td className="px-5 py-3 text-gray-400">
                               {p.category?.name}
                             </td>
                             <td className="px-5 py-3">
-                              <span className="px-2 py-1 rounded-full text-xs font-bold bg-orange-100 text-orange-700">
+                              <span className="px-2 py-1 rounded-full text-xs font-bold bg-orange-500/20 text-orange-300 border border-orange-500/30">
                                 {p.stock} {p.unit}
                               </span>
                             </td>
-                            <td className="px-5 py-3 text-gray-500">
+                            <td className="px-5 py-3 text-gray-400">
                               {p.minStock}
                             </td>
                           </tr>
@@ -355,14 +355,14 @@ const Reports = () => {
               )}
 
               {/* All Products */}
-              <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
-                <div className="px-5 py-4 border-b border-gray-100">
-                  <h3 className="font-bold text-gray-800">All Products Stock</h3>
+              <div className="bg-gray-800 rounded-2xl shadow-md shadow-black/20 overflow-hidden">
+                <div className="px-5 py-4 border-b border-gray-700">
+                  <h3 className="font-bold text-white">All Products Stock</h3>
                 </div>
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="bg-gray-50 text-gray-500 text-xs uppercase tracking-wider text-left">
+                      <tr className="bg-gray-900 text-gray-500 text-xs uppercase tracking-wider text-left">
                         <th className="px-5 py-3">Product</th>
                         <th className="px-5 py-3">Category</th>
                         <th className="px-5 py-3">Stock</th>
@@ -371,19 +371,19 @@ const Reports = () => {
                         <th className="px-5 py-3">Status</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-gray-50">
+                    <tbody className="divide-y divide-gray-700">
                       {inventoryReport.products?.map((p) => (
-                        <tr key={p._id} className="hover:bg-gray-50 transition">
-                          <td className="px-5 py-3 font-semibold text-gray-800">
+                        <tr key={p._id} className="hover:bg-gray-700/50 transition">
+                          <td className="px-5 py-3 font-semibold text-white">
                             {p.name}
                           </td>
-                          <td className="px-5 py-3 text-gray-500">
+                          <td className="px-5 py-3 text-gray-400">
                             {p.category?.name}
                           </td>
-                          <td className="px-5 py-3 font-bold text-gray-700">
+                          <td className="px-5 py-3 font-bold text-gray-300">
                             {p.stock} {p.unit}
                           </td>
-                          <td className="px-5 py-3 text-gray-600">
+                          <td className="px-5 py-3 text-gray-400">
                             Rs. {p.price?.toLocaleString()}
                           </td>
                           <td className="px-5 py-3 font-semibold text-indigo-600">
@@ -391,10 +391,10 @@ const Reports = () => {
                           </td>
                           <td className="px-5 py-3">
                             <span className={`px-2 py-1 rounded-full text-xs font-bold ${p.stock === 0
-                                ? "bg-red-100 text-red-700"
+                                ? "bg-red-500/20 text-red-300 border border-red-500/30"
                                 : p.stock <= p.minStock
-                                  ? "bg-orange-100 text-orange-700"
-                                  : "bg-emerald-100 text-emerald-700"
+                                  ? "bg-orange-500/20 text-orange-300 border border-orange-500/30"
+                                  : "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
                               }`}>
                               {p.stock === 0
                                 ? "Out of Stock"
@@ -418,19 +418,19 @@ const Reports = () => {
 
               {/* Stats */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div className="bg-emerald-50 rounded-2xl p-6 shadow-sm text-center">
+                <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-2xl p-6 shadow-md shadow-black/20 text-center">
                   <p className="text-sm text-emerald-500 mb-2">Total Revenue</p>
                   <p className="text-3xl font-bold text-emerald-700">
                     Rs. {financialReport.totalRevenue?.toLocaleString()}
                   </p>
                 </div>
-                <div className="bg-red-50 rounded-2xl p-6 shadow-sm text-center">
+                <div className="bg-red-500/10 border border-red-500/20 rounded-2xl p-6 shadow-md shadow-black/20 text-center">
                   <p className="text-sm text-red-400 mb-2">Total Expenses</p>
                   <p className="text-3xl font-bold text-red-600">
                     Rs. {financialReport.totalExpenses?.toLocaleString()}
                   </p>
                 </div>
-                <div className={`rounded-2xl p-6 shadow-sm text-center ${financialReport.netProfit >= 0 ? "bg-indigo-50" : "bg-red-50"
+                <div className={`rounded-2xl p-6 shadow-md shadow-black/20 text-center ${financialReport.netProfit >= 0 ? "bg-indigo-500/10 border border-indigo-500/20" : "bg-red-500/10 border border-red-500/20"
                   }`}>
                   <p className="text-sm text-indigo-400 mb-2">Net Profit</p>
                   <p className={`text-3xl font-bold ${financialReport.netProfit >= 0
@@ -443,8 +443,8 @@ const Reports = () => {
               </div>
 
               {/* Profit Bar */}
-              <div className="bg-white rounded-2xl p-5 shadow-sm">
-                <h3 className="font-bold text-gray-800 mb-4">
+              <div className="bg-gray-800 rounded-2xl p-5 shadow-md shadow-black/20">
+                <h3 className="font-bold text-white mb-4">
                   Revenue vs Expenses
                 </h3>
                 <div className="space-y-3">
@@ -453,7 +453,7 @@ const Reports = () => {
                       <span>Revenue</span>
                       <span>Rs. {financialReport.totalRevenue?.toLocaleString()}</span>
                     </div>
-                    <div className="h-4 bg-gray-100 rounded-full overflow-hidden">
+                    <div className="h-4 bg-gray-700 rounded-full overflow-hidden">
                       <div
                         className="h-full bg-emerald-500 rounded-full"
                         style={{ width: "100%" }}
@@ -465,7 +465,7 @@ const Reports = () => {
                       <span>Expenses</span>
                       <span>Rs. {financialReport.totalExpenses?.toLocaleString()}</span>
                     </div>
-                    <div className="h-4 bg-gray-100 rounded-full overflow-hidden">
+                    <div className="h-4 bg-gray-700 rounded-full overflow-hidden">
                       <div
                         className="h-full bg-red-400 rounded-full"
                         style={{
@@ -481,7 +481,7 @@ const Reports = () => {
                       <span>Net Profit</span>
                       <span>Rs. {financialReport.netProfit?.toLocaleString()}</span>
                     </div>
-                    <div className="h-4 bg-gray-100 rounded-full overflow-hidden">
+                    <div className="h-4 bg-gray-700 rounded-full overflow-hidden">
                       <div
                         className={`h-full rounded-full ${financialReport.netProfit >= 0
                             ? "bg-indigo-500"

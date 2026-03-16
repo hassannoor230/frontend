@@ -96,16 +96,16 @@ const Categories = () => {
     <div className="space-y-6">
 
       {/* Header */}
-      <div className="bg-white rounded-2xl p-5 sm:p-6 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="bg-gray-800 rounded-2xl p-5 sm:p-6 shadow-md shadow-black/20 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-800">Categories</h1>
+          <h1 className="text-2xl font-bold text-white">Categories</h1>
           <p className="text-sm text-gray-400 mt-1">
             Manage product categories
           </p>
         </div>
         <button
           onClick={openAddModal}
-          className="w-full sm:w-auto bg-gray-800 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl font-semibold text-sm transition"
+          className="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-2.5 rounded-xl font-semibold text-sm transition shadow-md shadow-indigo-500/20"
         >
           + Add Category
         </button>
@@ -113,13 +113,13 @@ const Categories = () => {
 
       {/* Stats */}
       <div className="grid grid-cols-2 gap-4">
-        <div className="bg-blue-300 rounded-2xl p-4 shadow-sm text-center">
-          <p className="text-xs text-black mb-1">Total Categories</p>
-          <p className="text-2xl font-bold text-black">{categories.length}</p>
+        <div className="bg-blue-500/20 border border-blue-500/30 rounded-2xl p-4 shadow-md shadow-black/20 text-center">
+          <p className="text-xs text-gray-300 mb-1">Total Categories</p>
+          <p className="text-2xl font-bold text-white">{categories.length}</p>
         </div>
-        <div className="bg-yellow-200 rounded-2xl p-4 shadow-sm text-center">
-          <p className="text-xs text-black mb-1">Total Products</p>
-          <p className="text-2xl font-bold text-black">{products.length}</p>
+        <div className="bg-yellow-500/20 border border-yellow-500/30 rounded-2xl p-4 shadow-md shadow-black/20 text-center">
+          <p className="text-xs text-gray-300 mb-1">Total Products</p>
+          <p className="text-2xl font-bold text-white">{products.length}</p>
         </div>
       </div>
 
@@ -127,7 +127,7 @@ const Categories = () => {
       {loading ? (
         <div className="flex items-center justify-center h-64">
           <div className=" flex justify-center items-center flex-col text-center py-16 text-gray-400">
-            <FiLoader className="text-4xl mb-2 mx-auto animate-spin text-gray-500" />
+            <FiLoader className="text-4xl mb-2 mx-auto animate-spin text-gray-400" />
             Loading...
           </div>
         </div>
@@ -136,26 +136,26 @@ const Categories = () => {
           {categories.map((cat) => (
             <div
               key={cat._id}
-              className="bg-white rounded-2xl shadow-sm p-5 flex items-center gap-4 hover:shadow-md transition"
+              className="bg-gray-800 rounded-2xl shadow-md shadow-black/20 p-5 flex items-center gap-4 hover:shadow-md transition"
             >
               {/* Icon */}
-              <div className="w-14 h-14 rounded-2xl bg-indigo-50 flex items-center justify-center text-3xl">
+              <div className="w-14 h-14 rounded-2xl bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-3xl">
                 {categoryIcons[cat.name] || "📁"}
               </div>
 
               {/* Info */}
               <div className="flex-1 min-w-0">
-                <p className="font-bold text-gray-800 truncate">{cat.name}</p>
+                <p className="font-bold text-white truncate">{cat.name}</p>
                 <p className="text-xs text-gray-400 mt-0.5 truncate">
                   {cat.description || "No description"}
                 </p>
                 <div className="flex items-center gap-2 mt-2">
-                  <span className="px-2 py-0.5 bg-indigo-100 text-indigo-700 rounded-full text-xs font-medium">
+                  <span className="px-2 py-0.5 bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 rounded-full text-xs font-medium">
                     {getProductCount(cat._id)} products
                   </span>
                   <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${cat.isActive
-                      ? "bg-emerald-100 text-emerald-700"
-                      : "bg-red-100 text-red-700"
+                      ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
+                      : "bg-red-500/20 text-red-300 border border-red-500/30"
                     }`}>
                     {cat.isActive ? "Active" : "Inactive"}
                   </span>
@@ -181,9 +181,9 @@ const Categories = () => {
           ))}
         </div>
       ) : (
-        <div className="bg-white rounded-2xl shadow-sm text-center py-16 text-gray-400">
+        <div className="bg-gray-800 rounded-2xl shadow-md shadow-black/20 text-center py-16 text-gray-400">
           <div className="text-5xl mb-3">📁</div>
-          <p className="font-medium text-gray-500">No Categories Yet</p>
+          <p className="font-medium text-gray-400">No Categories Yet</p>
           <p className="text-sm mt-1">Add your first category</p>
         </div>
       )}
@@ -191,14 +191,14 @@ const Categories = () => {
       {/* Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm mx-auto">
-            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
-              <h2 className="text-lg font-bold text-gray-800">
+          <div className="bg-gray-800 rounded-2xl shadow-xl shadow-black/40 w-full max-w-sm mx-auto">
+            <div className="px-6 py-4 border-b border-gray-700 flex items-center justify-between">
+              <h2 className="text-lg font-bold text-white">
                 {editCategory ? "✏️ Edit Category" : "➕ Add Category"}
               </h2>
               <button
                 onClick={() => setShowModal(false)}
-                className="text-gray-400 hover:text-gray-600 text-2xl font-bold"
+                className="text-gray-400 hover:text-gray-400 text-2xl font-bold"
               >
                 ✕
               </button>
@@ -206,13 +206,13 @@ const Categories = () => {
 
             <form onSubmit={handleSubmit} className="p-6 space-y-4">
               {error && (
-                <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-xl text-sm">
+                <div className="bg-red-500/10 border border-red-500/30 text-red-400 px-4 py-3 rounded-xl text-sm">
                   {error}
                 </div>
               )}
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-300 mb-1">
                   Category Name *
                 </label>
                 <input
@@ -221,12 +221,12 @@ const Categories = () => {
                   onChange={(e) => setForm({ ...form, name: e.target.value })}
                   required
                   placeholder="Beverages"
-                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                  className="w-full border border-gray-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-300 mb-1">
                   Description
                 </label>
                 <textarea
@@ -234,7 +234,7 @@ const Categories = () => {
                   onChange={(e) => setForm({ ...form, description: e.target.value })}
                   rows={3}
                   placeholder="Category description..."
-                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 resize-none"
+                  className="w-full border border-gray-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 resize-none"
                 />
               </div>
 
@@ -242,7 +242,7 @@ const Categories = () => {
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="flex-1 py-2.5 rounded-xl border border-gray-200 text-gray-600 text-sm font-medium transition"
+                  className="flex-1 py-2.5 rounded-xl border border-gray-700 text-gray-400 text-sm font-medium transition"
                 >
                   Cancel
                 </button>

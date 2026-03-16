@@ -59,14 +59,14 @@ const Expenses = () => {
     <div className="space-y-6">
 
       {/* Header */}
-      <div className="bg-white rounded-2xl p-5 sm:p-6 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="bg-gray-800 rounded-2xl p-5 sm:p-6 shadow-md shadow-black/20 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-800">Expenses</h1>
+          <h1 className="text-2xl font-bold text-white">Expenses</h1>
           <p className="text-sm text-gray-400 mt-1">Track business expenses</p>
         </div>
         <button
           onClick={() => { setShowModal(true); setError(""); }}
-          className="w-full sm:w-auto bg-gray-800 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl font-semibold text-sm transition"
+          className="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-2.5 rounded-xl font-semibold text-sm transition shadow-md shadow-indigo-500/20"
         >
           + Add Expense
         </button>
@@ -74,40 +74,40 @@ const Expenses = () => {
 
       {/* Stats */}
       <div className="grid grid-cols-2 gap-4">
-        <div className="bg-blue-300 rounded-2xl p-4 shadow-sm text-center">
-          <p className="text-xs text-black mb-1">Total Expenses</p>
-          <p className="text-2xl font-bold text-black">{expenses.length}</p>
+        <div className="bg-blue-500/20 border border-blue-500/30 rounded-2xl p-4 shadow-md shadow-black/20 text-center">
+          <p className="text-xs text-gray-300 mb-1">Total Expenses</p>
+          <p className="text-2xl font-bold text-white">{expenses.length}</p>
         </div>
-        <div className="bg-yellow-200 rounded-2xl p-4 shadow-sm text-center">
-          <p className="text-xs text-black mb-1">Total Amount</p>
-          <p className="text-xl font-bold text-black">
+        <div className="bg-yellow-500/20 border border-yellow-500/30 rounded-2xl p-4 shadow-md shadow-black/20 text-center">
+          <p className="text-xs text-gray-300 mb-1">Total Amount</p>
+          <p className="text-xl font-bold text-white">
             Rs. {totalExpenses.toLocaleString()}
           </p>
         </div>
       </div>
 
       {/* List */}
-      <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
+      <div className="bg-gray-800 rounded-2xl shadow-md shadow-black/20 overflow-hidden">
         {loading ? (
           <div className="flex items-center justify-center h-64">
             <div className=" flex justify-center items-center flex-col text-center py-16 text-gray-400">
-              <FiLoader className="text-4xl mb-2 mx-auto animate-spin text-gray-500" />
+              <FiLoader className="text-4xl mb-2 mx-auto animate-spin text-gray-400" />
               Loading...
             </div>
           </div>
         ) : expenses.length > 0 ? (
-          <div className="divide-y divide-gray-50">
+          <div className="divide-y divide-gray-700">
             {expenses.map((expense) => (
               <div
                 key={expense._id}
-                className="flex items-center justify-between px-5 py-4 hover:bg-gray-50 transition"
+                className="flex items-center justify-between px-5 py-4 hover:bg-gray-700/50 transition"
               >
                 <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-xl bg-red-100 flex items-center justify-center text-xl">
+                  <div className="w-10 h-10 rounded-xl bg-red-500/20 border border-red-500/30 flex items-center justify-center text-xl">
                     💸
                   </div>
                   <div>
-                    <p className="font-semibold text-gray-800">{expense.title}</p>
+                    <p className="font-semibold text-white">{expense.title}</p>
                     <p className="text-xs text-gray-400">
                       {expense.category} •{" "}
                       {new Date(expense.createdAt).toLocaleDateString()}
@@ -125,7 +125,7 @@ const Expenses = () => {
                   </p>
                   <button
                     onClick={() => handleDelete(expense._id)}
-                    className="bg-red-50 hover:bg-red-100 text-red-500 px-3 py-1.5 rounded-lg text-xs font-medium transition"
+                    className="bg-red-500/20 hover:bg-red-500/30 text-red-300 px-3 py-1.5 rounded-lg text-xs font-medium transition"
                   >
                     Delete
                   </button>
@@ -136,7 +136,7 @@ const Expenses = () => {
         ) : (
           <div className="text-center py-16 text-gray-400">
             <div className="text-5xl mb-3">💸</div>
-            <p className="font-medium text-gray-500">No Expenses Yet</p>
+            <p className="font-medium text-gray-400">No Expenses Yet</p>
             <p className="text-sm mt-1">Add your first expense</p>
           </div>
         )}
@@ -145,12 +145,12 @@ const Expenses = () => {
       {/* Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md mx-auto">
-            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
-              <h2 className="text-lg font-bold text-gray-800">➕ Add Expense</h2>
+          <div className="bg-gray-800 rounded-2xl shadow-xl shadow-black/40 w-full max-w-md mx-auto">
+            <div className="px-6 py-4 border-b border-gray-700 flex items-center justify-between">
+              <h2 className="text-lg font-bold text-white">➕ Add Expense</h2>
               <button
                 onClick={() => setShowModal(false)}
-                className="text-gray-400 hover:text-gray-600 text-2xl font-bold"
+                className="text-gray-400 hover:text-gray-400 text-2xl font-bold"
               >
                 ✕
               </button>
@@ -158,13 +158,13 @@ const Expenses = () => {
 
             <form onSubmit={handleSubmit} className="p-6 space-y-4">
               {error && (
-                <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-xl text-sm">
+                <div className="bg-red-500/10 border border-red-500/30 text-red-400 px-4 py-3 rounded-xl text-sm">
                   {error}
                 </div>
               )}
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-300 mb-1">
                   Title *
                 </label>
                 <input
@@ -173,12 +173,12 @@ const Expenses = () => {
                   onChange={(e) => setForm({ ...form, title: e.target.value })}
                   required
                   placeholder="Electricity Bill"
-                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                  className="w-full border border-gray-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-300 mb-1">
                   Amount (Rs.) *
                 </label>
                 <input
@@ -188,18 +188,18 @@ const Expenses = () => {
                   required
                   min="0"
                   placeholder="5000"
-                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                  className="w-full border border-gray-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-300 mb-1">
                   Category
                 </label>
                 <select
                   value={form.category}
                   onChange={(e) => setForm({ ...form, category: e.target.value })}
-                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                  className="w-full border border-gray-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
                 >
                   <option>General</option>
                   <option>Utilities</option>
@@ -213,7 +213,7 @@ const Expenses = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-300 mb-1">
                   Note (Optional)
                 </label>
                 <textarea
@@ -221,7 +221,7 @@ const Expenses = () => {
                   onChange={(e) => setForm({ ...form, note: e.target.value })}
                   rows={2}
                   placeholder="Additional details..."
-                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 resize-none"
+                  className="w-full border border-gray-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 resize-none"
                 />
               </div>
 
@@ -229,7 +229,7 @@ const Expenses = () => {
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="flex-1 py-2.5 rounded-xl border border-gray-200 text-gray-600 hover:bg-gray-50 text-sm font-medium transition"
+                  className="flex-1 py-2.5 rounded-xl border border-gray-700 text-gray-400 hover:bg-gray-700/50 text-sm font-medium transition"
                 >
                   Cancel
                 </button>

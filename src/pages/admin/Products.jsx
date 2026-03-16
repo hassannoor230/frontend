@@ -291,9 +291,9 @@ const Products = () => {
   const outOfStock    = products.filter((p) => p.stock === 0).length;
 
   const getStockBadge = (p) => {
-    if (p.stock === 0)           return "bg-red-100 text-red-700";
-    if (p.stock <= p.minStock)   return "bg-orange-100 text-orange-700";
-    return "bg-emerald-100 text-emerald-700";
+    if (p.stock === 0)           return "bg-red-500/20 text-red-300 border border-red-500/30";
+    if (p.stock <= p.minStock)   return "bg-orange-500/20 text-orange-300 border border-orange-500/30";
+    return "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30";
   };
 
   const getStockLabel = (p) => {
@@ -309,9 +309,9 @@ const Products = () => {
     <div className="space-y-5">
 
       {/* ── Header ── */}
-      <div className="bg-white rounded-2xl p-5 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="bg-gray-800 rounded-2xl p-5 shadow-md shadow-black/20 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl font-bold text-gray-800">Products</h1>
+          <h1 className="text-xl font-bold text-white">Products</h1>
           <p className="text-sm text-gray-400 mt-0.5">Manage your store products & variants</p>
         </div>
         <button
@@ -324,22 +324,22 @@ const Products = () => {
 
       {/* ── Stats ── */}
       <div className="grid grid-cols-3 gap-3">
-        <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-50 text-center">
-          <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center mx-auto mb-2">
+        <div className="bg-gray-800 rounded-2xl p-4 shadow-md shadow-black/20 border border-gray-50 text-center">
+          <div className="w-10 h-10 bg-blue-500/20 rounded-xl flex items-center justify-center mx-auto mb-2">
             <MdInventory className="text-blue-600 text-lg" />
           </div>
           <p className="text-xs text-gray-500 font-medium">Total</p>
-          <p className="text-2xl font-bold text-gray-800">{totalProducts}</p>
+          <p className="text-2xl font-bold text-white">{totalProducts}</p>
         </div>
-        <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-50 text-center">
-          <div className="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center mx-auto mb-2">
+        <div className="bg-gray-800 rounded-2xl p-4 shadow-md shadow-black/20 border border-gray-50 text-center">
+          <div className="w-10 h-10 bg-orange-500/20 rounded-xl flex items-center justify-center mx-auto mb-2">
             <FaExclamationTriangle className="text-orange-500 text-sm" />
           </div>
           <p className="text-xs text-gray-500 font-medium">Low Stock</p>
           <p className="text-2xl font-bold text-orange-600">{lowStock}</p>
         </div>
-        <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-50 text-center">
-          <div className="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center mx-auto mb-2">
+        <div className="bg-gray-800 rounded-2xl p-4 shadow-md shadow-black/20 border border-gray-50 text-center">
+          <div className="w-10 h-10 bg-red-500/20 rounded-xl flex items-center justify-center mx-auto mb-2">
             <FaBan className="text-red-500 text-sm" />
           </div>
           <p className="text-xs text-gray-500 font-medium">Out of Stock</p>
@@ -356,13 +356,13 @@ const Products = () => {
             placeholder="Search by name or SKU..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full border border-gray-200 rounded-xl pl-9 pr-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+            className="w-full border border-gray-700 rounded-xl pl-9 pr-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
           />
         </div>
         <select
           value={filterCat}
           onChange={(e) => setFilterCat(e.target.value)}
-          className="sm:w-44 border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+          className="sm:w-44 border border-gray-700 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
         >
           <option value="">All Categories</option>
           {categories.map((cat) => (
@@ -377,7 +377,7 @@ const Products = () => {
           <div className="col-span-2 text-center py-12 text-gray-400">Loading...</div>
         ) : filtered.length > 0 ? (
           filtered.map((product) => (
-            <div key={product._id} className="bg-white rounded-2xl shadow-sm overflow-hidden">
+            <div key={product._id} className="bg-gray-800 rounded-2xl shadow-md shadow-black/20 overflow-hidden">
               <div className="relative">
                 <img
                   src={product.image || `https://ui-avatars.com/api/?name=${product.name}&background=e0e7ff&color=4f46e5&size=200`}
@@ -394,14 +394,14 @@ const Products = () => {
                 )}
               </div>
               <div className="p-4">
-                <h3 className="font-bold text-gray-800">{product.name}</h3>
+                <h3 className="font-bold text-white">{product.name}</h3>
                 <p className="text-xs text-gray-400 mt-0.5">{product.sku} · {product.category?.name}</p>
 
                 {/* Variants preview Section */}
                 {product.variants?.length > 0 && (
                   <div className="flex flex-wrap gap-1 mt-2">
                     {product.variants.slice(0, 3).map((v, i) => (
-                      <span key={i} className="px-2 py-0.5 bg-indigo-50 text-indigo-700 text-xs rounded-lg font-medium">
+                      <span key={i} className="px-2 py-0.5 bg-indigo-500/20 text-indigo-300 text-xs rounded-lg font-medium">
                         {v.name} — Rs.{v.price}
                       </span>
                     ))}
@@ -445,11 +445,11 @@ const Products = () => {
       </div>
 
       {/* ── Desktop Table ── */}
-      <div className="hidden lg:block bg-white rounded-2xl shadow-sm overflow-hidden">
+      <div className="hidden lg:block bg-gray-800 rounded-2xl shadow-md shadow-black/20 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="bg-gray-50 text-gray-400 text-xs uppercase tracking-wider text-left">
+              <tr className="bg-gray-900 text-gray-500 text-xs uppercase tracking-wider text-left">
                 <th className="px-6 py-4">Product</th>
                 <th className="px-6 py-4">SKU</th>
                 <th className="px-6 py-4">Category</th>
@@ -461,12 +461,12 @@ const Products = () => {
                 <th className="px-6 py-4">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-50">
+            <tbody className="divide-y divide-gray-700">
               {loading ? (
                 <tr><td colSpan="9" className="text-center py-10 text-gray-400">Loading...</td></tr>
               ) : filtered.length > 0 ? (
                 filtered.map((product) => (
-                  <tr key={product._id} className="hover:bg-gray-50 transition">
+                  <tr key={product._id} className="hover:bg-gray-700/50 transition">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
                         <img
@@ -475,15 +475,15 @@ const Products = () => {
                           className="w-12 h-12 rounded-xl object-cover flex-shrink-0"
                         />
                         <div>
-                          <p className="font-semibold text-gray-800">{product.name}</p>
+                          <p className="font-semibold text-white">{product.name}</p>
                           <p className="text-xs text-gray-400">{product.unit}</p>
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 font-mono text-xs text-gray-500">{product.sku}</td>
-                    <td className="px-6 py-4 text-gray-600">{product.category?.name || "—"}</td>
-                    <td className="px-6 py-4 font-bold text-gray-800">Rs. {product.price?.toLocaleString()}</td>
-                    <td className="px-6 py-4 text-gray-500">Rs. {product.costPrice?.toLocaleString()}</td>
+                    <td className="px-6 py-4 font-mono text-xs text-gray-400">{product.sku}</td>
+                    <td className="px-6 py-4 text-gray-400">{product.category?.name || "—"}</td>
+                    <td className="px-6 py-4 font-bold text-white">Rs. {product.price?.toLocaleString()}</td>
+                    <td className="px-6 py-4 text-gray-400">Rs. {product.costPrice?.toLocaleString()}</td>
                     <td className="px-6 py-4">
                       <span className={`px-2.5 py-1 rounded-full text-xs font-bold ${getStockBadge(product)}`}>
                         {product.stock} {product.unit}
@@ -493,7 +493,7 @@ const Products = () => {
                       {product.variants?.length > 0 ? (
                         <div className="space-y-1">
                           {product.variants.slice(0, 2).map((v, i) => (
-                            <span key={i} className="block px-2 py-0.5 bg-indigo-50 text-indigo-700 text-xs rounded-lg font-medium w-fit">
+                            <span key={i} className="block px-2 py-0.5 bg-indigo-500/20 text-indigo-300 text-xs rounded-lg font-medium w-fit">
                               {v.name} · Rs.{v.price}
                             </span>
                           ))}
@@ -546,16 +546,16 @@ const Products = () => {
       ══════════════════════════════════════ */}
       {showModal && (
         <div className="fixed inset-0 bg-black/50 flex items-start justify-center z-50 p-4 overflow-y-auto">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-2xl my-4">
+          <div className="bg-gray-800 rounded-2xl shadow-xl shadow-black/40 w-full max-w-2xl my-4">
 
             {/* Modal Header */}
-            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between sticky top-0 bg-white rounded-t-2xl z-10">
-              <h2 className="text-lg font-bold text-gray-800">
+            <div className="px-6 py-4 border-b border-gray-700 flex items-center justify-between sticky top-0 bg-gray-800 rounded-t-2xl z-10">
+              <h2 className="text-lg font-bold text-white">
                 {editProduct ? "✏️ Edit Product" : "➕ Add New Product"}
               </h2>
               <button
                 onClick={() => setShowModal(false)}
-                className="w-8 h-8 bg-gray-100 hover:bg-gray-200 rounded-xl flex items-center justify-center transition"
+                className="w-8 h-8 bg-gray-700 hover:bg-gray-600 rounded-xl flex items-center justify-center transition"
               >
                 <FaTimes className="text-gray-500 text-xs" />
               </button>
@@ -563,7 +563,7 @@ const Products = () => {
 
             <form onSubmit={handleSubmit} className="p-6 space-y-5">
               {error && (
-                <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-xl text-sm">
+                <div className="bg-red-500/10 border border-red-500/30 text-red-400 px-4 py-3 rounded-xl text-sm">
                   {error}
                 </div>
               )}
@@ -572,35 +572,35 @@ const Products = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Product Name *</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">Product Name *</label>
                   <input
                     type="text" value={form.name}
                     onChange={(e) => setForm({ ...form, name: e.target.value })}
                     required placeholder="Coca Cola"
-                    className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                    className="w-full border border-gray-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">SKU *</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">SKU *</label>
                   <input
                     type="text" value={form.sku}
                     onChange={(e) => setForm({ ...form, sku: e.target.value })}
                     required placeholder="CC-001"
-                    className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                    className="w-full border border-gray-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
                   />
                 </div>
 
                 {/* Category */}
                 <div className="sm:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Category *</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">Category *</label>
                   {!showCatInput ? (
                     <div className="flex gap-2">
                       <select
                         value={form.category}
                         onChange={(e) => setForm({ ...form, category: e.target.value })}
                         required
-                        className="flex-1 border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                        className="flex-1 border border-gray-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
                       >
                         <option value="">Select Category</option>
                         {categories.map((cat) => (
@@ -610,7 +610,7 @@ const Products = () => {
                       <button
                         type="button"
                         onClick={() => setShowCatInput(true)}
-                        className="px-3 py-2.5 bg-gray-100 hover:bg-indigo-50 hover:text-indigo-600 text-gray-600 rounded-xl text-xs font-bold transition flex items-center gap-1 whitespace-nowrap"
+                        className="px-3 py-2.5 bg-gray-100 hover:bg-indigo-50 hover:text-indigo-600 text-gray-400 rounded-xl text-xs font-bold transition flex items-center gap-1 whitespace-nowrap"
                       >
                         <FaPlus className="text-[10px]" /> New
                       </button>
@@ -623,7 +623,7 @@ const Products = () => {
                         onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), handleCreateCategory())}
                         placeholder="Category name..."
                         autoFocus
-                        className="flex-1 border border-indigo-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                        className="flex-1 bg-gray-900 border border-indigo-500/50 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
                       />
                       <button
                         type="button" onClick={handleCreateCategory}
@@ -635,7 +635,7 @@ const Products = () => {
                       <button
                         type="button"
                         onClick={() => { setShowCatInput(false); setNewCatName(""); }}
-                        className="w-10 h-10 bg-gray-100 hover:bg-gray-200 text-gray-500 rounded-xl flex items-center justify-center transition"
+                        className="w-10 h-10 bg-gray-700 hover:bg-gray-600 text-gray-400 rounded-xl flex items-center justify-center transition"
                       >
                         <FaTimes className="text-xs" />
                       </button>
@@ -644,86 +644,86 @@ const Products = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Unit</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">Unit</label>
                   <select
                     value={form.unit}
                     onChange={(e) => setForm({ ...form, unit: e.target.value })}
-                    className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                    className="w-full border border-gray-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
                   >
                     {UNIT_OPTIONS.map((u) => (<option key={u} value={u}>{u}</option>))}
                   </select>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Sale Price (Rs.) *</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">Sale Price (Rs.) *</label>
                   <input
                     type="number" value={form.price}
                     onChange={(e) => setForm({ ...form, price: e.target.value })}
                     required min="0" placeholder="80"
-                    className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                    className="w-full border border-gray-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Cost Price (Rs.)</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">Cost Price (Rs.)</label>
                   <input
                     type="number" value={form.costPrice}
                     onChange={(e) => setForm({ ...form, costPrice: e.target.value })}
                     min="0" placeholder="60"
-                    className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                    className="w-full border border-gray-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Stock Quantity</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">Stock Quantity</label>
                   <input
                     type="number" value={form.stock}
                     onChange={(e) => setForm({ ...form, stock: e.target.value })}
                     min="0" placeholder="100"
-                    className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                    className="w-full border border-gray-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Min Stock (Alert)</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">Min Stock (Alert)</label>
                   <input
                     type="number" value={form.minStock}
                     onChange={(e) => setForm({ ...form, minStock: e.target.value })}
                     min="0" placeholder="10"
-                    className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                    className="w-full border border-gray-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
                   />
                 </div>
 
                 <div className="sm:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Image URL</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">Image URL</label>
                   <input
                     type="text" value={form.image}
                     onChange={(e) => setForm({ ...form, image: e.target.value })}
                     placeholder="https://..."
-                    className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                    className="w-full border border-gray-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
                   />
                   {form.image && (
-                    <img src={form.image} alt="Preview" className="mt-2 w-20 h-20 rounded-xl object-cover border border-gray-200" />
+                    <img src={form.image} alt="Preview" className="mt-2 w-20 h-20 rounded-xl object-cover border border-gray-700" />
                   )}
                 </div>
 
                 <div className="sm:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Barcode</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">Barcode</label>
                   <input
                     type="text" value={form.barcode}
                     onChange={(e) => setForm({ ...form, barcode: e.target.value })}
                     placeholder="Optional"
-                    className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                    className="w-full border border-gray-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
                   />
                 </div>
 
                 <div className="sm:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">Description</label>
                   <textarea
                     value={form.description}
                     onChange={(e) => setForm({ ...form, description: e.target.value })}
                     rows={2} placeholder="Product description..."
-                    className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 resize-none"
+                    className="w-full border border-gray-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 resize-none"
                   />
                 </div>
               </div>
@@ -731,10 +731,10 @@ const Products = () => {
               {/* ════════════════════════════════
                   VARIANTS SECTION
               ════════════════════════════════ */}
-              <div className="border-t border-gray-100 pt-5">
+              <div className="border-t border-gray-700 pt-5">
                 <div className="flex items-center justify-between mb-3">
                   <div>
-                    <h3 className="text-sm font-bold text-gray-700">
+                    <h3 className="text-sm font-bold text-gray-300">
                       Product Variants
                       <span className="text-gray-400 font-normal ml-1">(Optional)</span>
                     </h3>
@@ -757,12 +757,12 @@ const Products = () => {
                         key={index}
                         className={`flex items-center justify-between rounded-xl px-4 py-2.5 border transition ${
                           editVarIdx === index
-                            ? "bg-indigo-50 border-indigo-300"
-                            : "bg-gray-50 border-gray-100"
+                            ? "bg-indigo-500/10 border border-indigo-500/30"
+                            : "bg-gray-50 border-gray-700"
                         }`}
                       >
                         <div className="flex items-center gap-3 flex-wrap min-w-0">
-                          <span className="text-sm font-bold text-gray-800 truncate">{v.name}</span>
+                          <span className="text-sm font-bold text-white truncate">{v.name}</span>
                           <span className="text-xs font-semibold text-indigo-600 flex-shrink-0">
                             Rs. {Number(v.price).toLocaleString()}
                           </span>
@@ -797,8 +797,8 @@ const Products = () => {
                 )}
 
                 {/* ── Add / Edit variant form ── */}
-                <div className="bg-gray-50 rounded-xl p-4 border border-gray-100">
-                  <p className="text-xs font-semibold text-gray-600 mb-3">
+                <div className="bg-gray-50 rounded-xl p-4 border border-gray-700">
+                  <p className="text-xs font-semibold text-gray-400 mb-3">
                     {editVarIdx !== null ? "✏️ Edit Variant" : "➕ Add Variant"}
                   </p>
 
@@ -811,7 +811,7 @@ const Products = () => {
                         value={variantForm.name}
                         onChange={(e) => setVariantForm({ ...variantForm, name: e.target.value })}
                         placeholder="500, Red, Large"
-                        className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 bg-white"
+                        className="w-full border border-gray-700 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 bg-white"
                       />
                     </div>
 
@@ -821,7 +821,7 @@ const Products = () => {
                       <select
                         value={variantForm.unit}
                         onChange={(e) => setVariantForm({ ...variantForm, unit: e.target.value })}
-                        className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 bg-white"
+                        className="w-full border border-gray-700 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 bg-white"
                       >
                         <option value="">No unit</option>
                         {UNIT_OPTIONS.map((u) => (<option key={u} value={u}>{u}</option>))}
@@ -837,7 +837,7 @@ const Products = () => {
                         onChange={(e) => setVariantForm({ ...variantForm, price: e.target.value })}
                         placeholder="80"
                         min="0"
-                        className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 bg-white"
+                        className="w-full border border-gray-700 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 bg-white"
                       />
                     </div>
 
@@ -851,7 +851,7 @@ const Products = () => {
                         placeholder="0"
                         min="0"
                         onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), handleAddVariant())}
-                        className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 bg-white"
+                        className="w-full border border-gray-700 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 bg-white"
                       />
                     </div>
 
@@ -863,7 +863,7 @@ const Products = () => {
                         value={variantForm.sku}
                         onChange={(e) => setVariantForm({ ...variantForm, sku: e.target.value })}
                         placeholder="CC-500ML"
-                        className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 bg-white"
+                        className="w-full border border-gray-700 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 bg-white"
                       />
                     </div>
 
@@ -882,7 +882,7 @@ const Products = () => {
                           <button
                             type="button"
                             onClick={handleCancelEditVariant}
-                            className="h-9 px-3 bg-gray-200 hover:bg-gray-300 text-gray-600 rounded-xl text-xs font-bold transition"
+                            className="h-9 px-3 bg-gray-200 hover:bg-gray-300 text-gray-400 rounded-xl text-xs font-bold transition"
                           >
                             Cancel
                           </button>
@@ -907,7 +907,7 @@ const Products = () => {
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="px-5 py-2.5 rounded-xl border border-gray-200 text-gray-600 hover:bg-gray-50 text-sm font-medium transition"
+                  className="px-5 py-2.5 rounded-xl border border-gray-700 text-gray-400 hover:bg-gray-700/50 text-sm font-medium transition"
                 >
                   Cancel
                 </button>
